@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Training Plan Service | Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .input-focus:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .role-selector input:checked + label {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-2xl p-8 card-shadow">
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-indigo-100 p-3 rounded-full">
+                        <i class="fas fa-dumbbell text-indigo-600 text-3xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800">Training Plan Pro</h1>
+                <p class="text-gray-600 mt-2">Personalized coaching for peak performance</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="username" name="username" required 
+                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-3 border"
+                               placeholder="Enter your username">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required 
+                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-3 border"
+                               placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">I am a</label>
+                    <div class="grid grid-cols-2 gap-4 role-selector">
+                        <div>
+                            <input type="radio" id="coach" name="role" value="coach" class="hidden peer" checked>
+                            <label for="coach" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-chalkboard-teacher text-2xl mb-2 text-indigo-600"></i>
+                                <span class="font-medium">Coach</span>
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" id="athlete" name="role" value="athlete" class="hidden peer">
+                            <label for="athlete" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-running text-2xl mb-2 text-indigo-600"></i>
+                                <span class="font-medium">Athlete</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" id="loginBtn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        <span id="loginText">Sign in</span>
+                        <span id="loginSpinner" class="hidden ml-2">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">New to Training Plan Pro?</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button id="registerBtn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Create your account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <p class="text-xs text-white opacity-80">
+                © 2023 Training Plan Pro. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const loginText = document.getElementById('loginText');
+            const loginSpinner = document.getElementById('loginSpinner');
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginText.textContent = 'Signing in...';
+            loginSpinner.classList.remove('hidden');
+            loginBtn.classList.add('animate-pulse');
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Reset button state
+                loginBtn.disabled = false;
+                loginText.textContent = 'Sign in';
+                loginSpinner.classList.add('hidden');
+                loginBtn.classList.remove('animate-pulse');
+                
+                // Get form values
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const role = document.querySelector('input[name="role"]:checked').value;
+                
+                // Simple validation
+                if (username && password) {
+                    alert(`Successfully logged in as ${role}!\nUsername: ${username}`);
+                } else {
+                    alert('Please fill in all fields');
+                }
+            }, 1500);
+        });
+        
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            alert('Redirecting to registration page...');
+            // In a real app, this would navigate to the registration page
+        });
+        
+        // Add some visual feedback for role selection
+        const roleLabels = document.querySelectorAll('.role-selector label');
+        roleLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                roleLabels.forEach(l => l.classList.remove('ring-2', 'ring-indigo-500'));
+                this.classList.add('ring-2', 'ring-indigo-500');
+            });
+        });
+    </script>
+</body>
+</html>

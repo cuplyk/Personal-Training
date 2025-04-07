@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Training Plan Service | Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .input-focus:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .role-selector input:checked + label {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        .password-strength {
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-2xl p-8 card-shadow">
+            <div class="text-center mb-8">
+                <div class="flex justify-center mb-4">
+                    <div class="bg-indigo-100 p-3 rounded-full">
+                        <i class="fas fa-dumbbell text-indigo-600 text-3xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800">Create Your Account</h1>
+                <p class="text-gray-600 mt-2">Join our Personal Training Plan Service</p>
+            </div>
+
+            <form id="registerForm" class="space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="firstName" name="firstName" required 
+                                   class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                                   placeholder="John">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="lastName" name="lastName" required 
+                                   class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                                   placeholder="Doe">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" name="email" required 
+                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                               placeholder="your@email.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-at text-gray-400"></i>
+                        </div>
+                        <input type="text" id="username" name="username" required 
+                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                               placeholder="username">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <span id="username-availability" class="text-xs hidden"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required 
+                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                               placeholder="••••••••">
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 grid grid-cols-4 gap-1">
+                        <div id="strength-1" class="password-strength bg-gray-200 rounded"></div>
+                        <div id="strength-2" class="password-strength bg-gray-200 rounded"></div>
+                        <div id="strength-3" class="password-strength bg-gray-200 rounded"></div>
+                        <div id="strength-4" class="password-strength bg-gray-200 rounded"></div>
+                    </div>
+                    <p id="password-strength-text" class="text-xs mt-1 text-gray-500">Password strength</p>
+                </div>
+
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required 
+                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                               placeholder="••••••••">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <span id="password-match" class="text-xs hidden"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">I am a</label>
+                    <div class="grid grid-cols-2 gap-4 role-selector">
+                        <div>
+                            <input type="radio" id="coach" name="role" value="coach" class="hidden peer">
+                            <label for="coach" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-chalkboard-teacher text-2xl mb-2 text-indigo-600"></i>
+                                <span class="font-medium">Coach</span>
+                                <span class="text-xs text-gray-500 mt-1">Create training plans</span>
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" id="athlete" name="role" value="athlete" class="hidden peer" checked>
+                            <label for="athlete" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-running text-2xl mb-2 text-indigo-600"></i>
+                                <span class="font-medium">Athlete</span>
+                                <span class="text-xs text-gray-500 mt-1">Follow training plans</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="coachFields" class="hidden space-y-4">
+                    <div>
+                        <label for="specialization" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                        <select id="specialization" name="specialization" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border">
+                            <option value="">Select your specialization</option>
+                            <option value="strength">Strength Training</option>
+                            <option value="endurance">Endurance Training</option>
+                            <option value="weightloss">Weight Loss</option>
+                            <option value="rehabilitation">Rehabilitation</option>
+                            <option value="sports">Sports Specific</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="certification" class="block text-sm font-medium text-gray-700 mb-1">Certification</label>
+                        <input type="text" id="certification" name="certification" 
+                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
+                               placeholder="E.g., NASM, ACE, etc.">
+                    </div>
+                </div>
+
+                <div id="athleteFields" class="space-y-4">
+                    <div>
+                        <label for="fitnessLevel" class="block text-sm font-medium text-gray-700 mb-1">Fitness Level</label>
+                        <select id="fitnessLevel" name="fitnessLevel" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border">
+                            <option value="">Select your fitness level</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="elite">Elite Athlete</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="goals" class="block text-sm font-medium text-gray-700 mb-1">Primary Goals</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="goal-strength" name="goals" value="strength" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="goal-strength" class="ml-2 block text-sm text-gray-700">Strength</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="goal-endurance" name="goals" value="endurance" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="goal-endurance" class="ml-2 block text-sm text-gray-700">Endurance</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="goal-weightloss" name="goals" value="weightloss" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="goal-weightloss" class="ml-2 block text-sm text-gray-700">Weight Loss</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="goal-muscle" name="goals" value="muscle" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="goal-muscle" class="ml-2 block text-sm text-gray-700">Muscle Gain</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center">
+                    <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <label for="terms" class="ml-2 block text-sm text-gray-700">
+                        I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <div>
+                    <button type="submit" id="registerBtn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        <span id="registerText">Create Account</span>
+                        <span id="registerSpinner" class="hidden ml-2">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Already have an account?</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button id="loginBtn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Sign in to your account
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <p class="text-xs text-white opacity-80">
+                © 2023 Training Plan Pro. All rights reserved.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBars = [
+                document.getElementById('strength-1'),
+                document.getElementById('strength-2'),
+                document.getElementById('strength-3'),
+                document.getElementById('strength-4')
+            ];
+            const strengthText = document.getElementById('password-strength-text');
+            
+            // Reset all bars
+            strengthBars.forEach(bar => {
+                bar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500');
+                bar.classList.add('bg-gray-200');
+            });
+            
+            if (password.length === 0) {
+                strengthText.textContent = 'Password strength';
+                strengthText.classList.remove('text-red-500', 'text-yellow-500', 'text-green-500');
+                strengthText.classList.add('text-gray-500');
+                return;
+            }
+            
+            // Very simple strength calculation (for demo purposes)
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^A-Za-z0-9]/)) strength++;
+            
+            // Update bars
+            for (let i = 0; i < strength; i++) {
+                if (i < 2) {
+                    strengthBars[i].classList.remove('bg-gray-200');
+                    strengthBars[i].classList.add('bg-red-500');
+                } else if (i === 2) {
+                    strengthBars[i].classList.remove('bg-gray-200');
+                    strengthBars[i].classList.add('bg-yellow-500');
+                } else {
+                    strengthBars[i].classList.remove('bg-gray-200');
+                    strengthBars[i].classList.add('bg-green-500');
+                }
+            }
+            
+            // Update text
+            if (strength <= 1) {
+                strengthText.textContent = 'Weak';
+                strengthText.classList.remove('text-gray-500', 'text-yellow-500', 'text-green-500');
+                strengthText.classList.add('text-red-500');
+            } else if (strength <= 2) {
+                strengthText.textContent = 'Fair';
+                strengthText.classList.remove('text-gray-500', 'text-red-500', 'text-green-500');
+                strengthText.classList.add('text-yellow-500');
+            } else {
+                strengthText.textContent = 'Strong';
+                strengthText.classList.remove('text-gray-500', 'text-red-500', 'text-yellow-500');
+                strengthText.classList.add('text-green-500');
+            }
+        });
+
+        // Check password match
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            const matchIndicator = document.getElementById('password-match');
+            
+            if (confirmPassword.length === 0) {
+                matchIndicator.classList.add('hidden');
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                matchIndicator.textContent = '✓ Passwords match';
+                matchIndicator.classList.remove('hidden', 'text-red-500');
+                matchIndicator.classList.add('text-green-500');
+            } else {
+                matchIndicator.textContent = '✗ Passwords don\'t match';
+                matchIndicator.classList.remove('hidden', 'text-green-500');
+                matchIndicator.classList.add('text-red-500');
+            }
+        });
+
+        // Check username availability (simulated)
+        document.getElementById('username').addEventListener('input', function() {
+            const username = this.value;
+            const availabilityIndicator = document.getElementById('username-availability');
+            
+            if (username.length < 3) {
+                availabilityIndicator.classList.add('hidden');
+                return;
+            }
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // This is just a demo - in a real app you'd check with your backend
+                const takenUsernames = ['admin', 'coach', 'athlete', 'test', 'demo'];
+                if (takenUsernames.includes(username.toLowerCase())) {
+                    availabilityIndicator.textContent = '✗ Taken';
+                    availabilityIndicator.classList.remove('hidden', 'text-green-500');
+                    availabilityIndicator.classList.add('text-red-500');
+                } else {
+                    availabilityIndicator.textContent = '✓ Available';
+                    availabilityIndicator.classList.remove('hidden', 'text-red-500');
+                    availabilityIndicator.classList.add('text-green-500');
+                }
+            }, 500);
+        });
+
+        // Toggle between coach and athlete fields
+        document.querySelectorAll('input[name="role"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'coach') {
+                    document.getElementById('coachFields').classList.remove('hidden');
+                    document.getElementById('athleteFields').classList.add('hidden');
+                } else {
+                    document.getElementById('coachFields').classList.add('hidden');
+                    document.getElementById('athleteFields').classList.remove('hidden');
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const registerText = document.getElementById('registerText');
+            const registerSpinner = document.getElementById('registerSpinner');
+            
+            // Show loading state
+            registerBtn.disabled = true;
+            registerText.textContent = 'Creating account...';
+            registerSpinner.classList.remove('hidden');
+            registerBtn.classList.add('animate-pulse');
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Reset button state
+                registerBtn.disabled = false;
+                registerText.textContent = 'Create Account';
+                registerSpinner.classList.add('hidden');
+                registerBtn.classList.remove('animate-pulse');
+                
+                // Get form values
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('email').value;
+                const username = document.getElementById('username').value;
+                const role = document.querySelector('input[name="role"]:checked').value;
+                
+                // Simple validation
+                if (firstName && lastName && email && username) {
+                    alert(`Account created successfully!\nWelcome ${firstName} ${lastName} (${username}) as a ${role}.`);
+                    // In a real app, this would redirect to the dashboard
+                } else {
+                    alert('Please fill in all required fields');
+                }
+            }, 2000);
+        });
+        
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            alert('Redirecting to login page...');
+            // In a real app, this would navigate to the login page
+        });
+    </script>
+</body>
+</html>
