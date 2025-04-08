@@ -3,409 +3,703 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Training Plan Service</title>
+    <title>Coach Dashboard | Personal Training Plan Service</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        accent: '#f59e0b',
+                        dark: '#1e293b',
+                        light: '#f8fafc',
+                        powerlifting: '#8b5cf6',
+                        olympic: '#ec4899',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        coach: '#7c3aed'
+                    },
+                    transitionProperty: {
+                        'size': 'width, height, transform',
+                        'shadow': 'box-shadow'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .sidebar {
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .coach-card {
+            background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
             transition: all 0.3s ease;
         }
-        .progress-bar {
-            transition: width 0.5s ease;
+        
+        .coach-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.4);
         }
-        .week-container {
-            transition: all 0.3s ease;
-        }
-        .exercise-row {
+        
+        .athlete-card {
             transition: all 0.2s ease;
         }
-        .exercise-row:hover {
+        
+        .athlete-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #7c3aed;
         }
+        
+        .stats-card {
+            transition: all 0.2s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-coach {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-coach:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.4), 0 2px 4px -1px rgba(124, 58, 237, 0.06);
+        }
+        
+        .btn-secondary {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .btn-click:active {
+            transform: scale(0.98);
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #7c3aed;
+        }
+        
+        .nav-item.active {
+            color: #7c3aed;
+            border-bottom: 2px solid #7c3aed;
+        }
+        
+        .nav-icon {
+            transition: all 0.2s ease;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .pr-badge {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .dropdown-content {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                position: fixed;
-                z-index: 50;
-                height: 100vh;
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .mobile-menu-btn {
-                display: block;
+            .mobile-stack {
+                flex-direction: column;
             }
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans">
-    <div class="flex h-screen overflow-hidden">
-        <!-- Mobile menu button -->
-        <button class="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-blue-600 text-white shadow-lg mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-
-        <!-- Sidebar -->
-        <div class="sidebar bg-white w-64 border-r border-gray-200 flex flex-col">
-            <div class="p-4 border-b border-gray-200">
-                <h1 class="text-2xl font-bold text-blue-600">
-                    <i class="fas fa-dumbbell mr-2"></i> PTPS
-                </h1>
-                <p class="text-xs text-gray-500">Personal Training Plan Service</p>
-            </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="#" class="flex items-center p-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
-                    <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-clipboard-list mr-3"></i> Training Plans
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg text-gray-600 hover:bg-gray-100">
-                    <i class="fas fa-users mr-3"></i> Athletes
-                </a>
-            </nav>
-            <div class="p-4 border-t border-gray-200">
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-10">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <i class="fas fa-user text-blue-600"></i>
+                    <div class="w-10 h-10 rounded-full bg-coach flex items-center justify-center text-white font-bold transform hover:rotate-12 transition-transform">
+                        <span class="transform hover:scale-110 transition-transform">CO</span>
                     </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium">Trainer Name</p>
-                        <p class="text-xs text-gray-500">Professional</p>
+                    <h1 class="ml-3 text-xl font-bold text-dark">Coach Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative dropdown">
+                        <button class="text-gray-600 hover:text-coach relative transition-colors">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                        </button>
+                        <div class="dropdown-content absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-20">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">New message from Alex</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">PR Alert: Sarah hit 120kg squat</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">3 athletes due for program updates</a>
+                        </div>
+                    </div>
+                    <button class="text-gray-600 hover:text-coach transition-colors">
+                        <i class="fas fa-comment-dots text-xl"></i>
+                    </button>
+                    <div class="flex items-center group">
+                        <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="User" class="w-8 h-8 rounded-full border-2 border-transparent group-hover:border-coach transition-all">
+                        <span class="ml-2 text-sm font-medium hidden md:inline">Coach Olivia</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <!-- Main content -->
-        <div class="flex-1 overflow-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
-                    <button id="createPlanBtn" class="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
-                        <i class="fas fa-plus mr-2"></i> Create New Training Plan
-                    </button>
-                </div>
-
-                <!-- Dashboard View -->
-                <div id="dashboardView" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Athlete Progress</h3>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Athlete</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training Plan</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                                <i class="fas fa-user text-blue-600"></i>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">John Smith</div>
-                                                <div class="text-sm text-gray-500">john@example.com</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">12-Week Strength Program</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                            <div class="progress-bar bg-green-500 h-2.5 rounded-full" style="width: 75%"></div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Active
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                                <i class="fas fa-user text-blue-600"></i>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">Sarah Johnson</div>
-                                                <div class="text-sm text-gray-500">sarah@example.com</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">8-Week Fat Loss</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                            <div class="progress-bar bg-blue-500 h-2.5 rounded-full" style="width: 50%"></div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                            In Progress
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                                <i class="fas fa-user text-blue-600"></i>
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">Mike Williams</div>
-                                                <div class="text-sm text-gray-500">mike@example.com</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">Beginner Mobility</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                            <div class="progress-bar bg-yellow-500 h-2.5 rounded-full" style="width: 25%"></div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                            Started
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+        <!-- Main Content -->
+        <main class="flex-1 container mx-auto px-4 py-6">
+            <!-- Welcome & Stats -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-dark">Welcome back, <span class="text-coach">Coach Olivia</span>!</h2>
+                        <p class="text-gray-600">"A good coach can change a game. A great coach can change a life."</p>
                     </div>
-                </div>
-
-                <!-- Training Plan Creator (Hidden by default) -->
-                <div id="planCreatorView" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">New Training Plan</h3>
-                        <button id="backToDashboardBtn" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-arrow-left mr-1"></i> Back to Dashboard
+                    <div class="mt-4 md:mt-0 flex space-x-2">
+                        <button class="btn-coach btn-click px-4 py-2 bg-coach text-white rounded-lg flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            <span>New Program</span>
                         </button>
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="planName" class="block text-sm font-medium text-gray-700 mb-1">Plan Name</label>
-                        <input type="text" id="planName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 12-Week Strength Program">
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="planDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea id="planDescription" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Brief description of the training plan"></textarea>
-                    </div>
-
-                    <div id="weeksContainer">
-                        <!-- Weeks will be added here dynamically -->
-                    </div>
-
-                    <div class="flex space-x-3 mt-6">
-                        <button id="addWeekBtn" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
-                            <i class="fas fa-plus mr-2"></i> Add Week
-                        </button>
-                        <button id="savePlanBtn" class="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
-                            <i class="fas fa-save mr-2"></i> Save Plan
+                        <button class="btn-secondary btn-click px-4 py-2 bg-white border border-gray-300 rounded-lg flex items-center">
+                            <i class="fas fa-ellipsis-h"></i>
                         </button>
                     </div>
                 </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-coach">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Active Athletes</p>
+                                <h3 class="text-xl font-bold mt-1">14</h3>
+                            </div>
+                            <div class="p-2 rounded-lg bg-purple-100 text-coach transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-600 flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-success mr-2"></span>
+                                <span>5 in competition prep</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-secondary">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Programs Due</p>
+                                <h3 class="text-xl font-bold mt-1">3</h3>
+                            </div>
+                            <div class="p-2 rounded-lg bg-green-100 text-secondary transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-600 flex items-center">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>2 overdue</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-accent">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Recent PRs</p>
+                                <h3 class="text-xl font-bold mt-1">7</h3>
+                                <p class="text-sm text-gray-500">This week</p>
+                            </div>
+                            <div class="p-2 rounded-lg bg-yellow-100 text-accent transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-green-600 font-medium flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                +12% from last week
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-danger">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Messages</p>
+                                <h3 class="text-xl font-bold mt-1">5</h3>
+                            </div>
+                            <div class="p-2 rounded-lg bg-red-100 text-danger transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-comment-alt"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-600 truncate">
+                                <span class="w-2 h-2 rounded-full bg-danger mr-2 inline-block"></span>
+                                2 require immediate response
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Athlete Management -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-dark">Athlete Management</h2>
+                            <div class="flex space-x-2">
+                                <button class="text-coach text-sm font-medium hover:underline">View All</button>
+                                <button class="btn-coach btn-click px-3 py-1 bg-coach text-white text-xs rounded-full">
+                                    <i class="fas fa-plus mr-1"></i>
+                                    Add Athlete
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <!-- Tabs -->
+                            <div class="flex border-b border-gray-200 mb-4">
+                                <button class="nav-item active px-4 py-2 text-sm font-medium" data-tab="all-athletes">
+                                    All Athletes
+                                </button>
+                                <button class="nav-item px-4 py-2 text-sm font-medium" data-tab="powerlifters">
+                                    Powerlifters
+                                </button>
+                                <button class="nav-item px-4 py-2 text-sm font-medium" data-tab="olympic">
+                                    Olympic Lifters
+                                </button>
+                                <button class="nav-item px-4 py-2 text-sm font-medium" data-tab="needs-attention">
+                                    Needs Attention
+                                </button>
+                            </div>
+
+                            <!-- Search and Filter -->
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                                <div class="relative w-full md:w-64 mb-2 md:mb-0">
+                                    <input type="text" placeholder="Search athletes..." class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coach focus:border-coach">
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="btn-secondary btn-click px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs">
+                                        <i class="fas fa-filter mr-1"></i>
+                                        Filter
+                                    </button>
+                                    <button class="btn-secondary btn-click px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs">
+                                        <i class="fas fa-sort mr-1"></i>
+                                        Sort
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Athlete List -->
+                            <div class="space-y-3">
+                                <!-- Tab Content - All Athletes -->
+                                <div id="all-athletes" class="tab-content active">
+                                    <!-- Athlete 1 -->
+                                    <div class="athlete-card bg-white border border-gray-100 rounded-lg p-4 hover:shadow-md">
+                                        <div class="flex items-start">
+                                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Athlete" class="w-12 h-12 rounded-full border-2 border-coach">
+                                            <div class="ml-3 flex-1">
+                                                <div class="flex justify-between items-start">
+                                                    <div>
+                                                        <h4 class="font-medium">Alex Johnson</h4>
+                                                        <p class="text-sm text-gray-500">Powerlifting | Week 3 of 12</p>
+                                                    </div>
+                                                    <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-primary rounded-full">On Track</span>
+                                                </div>
+                                                <div class="mt-2 grid grid-cols-3 gap-2 text-center">
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Squat</p>
+                                                        <p class="font-medium">180kg</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Bench</p>
+                                                        <p class="font-medium">120kg</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Deadlift</p>
+                                                        <p class="font-medium">210kg</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                                            <div class="flex space-x-2">
+                                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-chart-line mr-1"></i>
+                                                    Progress
+                                                </button>
+                                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-clipboard-list mr-1"></i>
+                                                    Program
+                                                </button>
+                                            </div>
+                                            <div class="flex space-x-2">
+                                                <button class="btn-click text-gray-400 hover:text-coach transition-colors">
+                                                    <i class="fas fa-comment-alt"></i>
+                                                </button>
+                                                <button class="btn-click text-gray-400 hover:text-coach transition-colors">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Athlete 2 -->
+                                    <div class="athlete-card bg-white border border-gray-100 rounded-lg p-4 hover:shadow-md">
+                                        <div class="flex items-start">
+                                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Athlete" class="w-12 h-12 rounded-full border-2 border-olympic">
+                                            <div class="ml-3 flex-1">
+                                                <div class="flex justify-between items-start">
+                                                    <div>
+                                                        <h4 class="font-medium">Sarah Williams</h4>
+                                                        <p class="text-sm text-gray-500">Olympic Lifting | Week 5 of 8</p>
+                                                    </div>
+                                                    <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-warning rounded-full">Needs Review</span>
+                                                </div>
+                                                <div class="mt-2 grid grid-cols-3 gap-2 text-center">
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Snatch</p>
+                                                        <p class="font-medium">75kg</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">C&J</p>
+                                                        <p class="font-medium">92kg</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">FSquat</p>
+                                                        <p class="font-medium">110kg</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                                            <div class="flex space-x-2">
+                                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-chart-line mr-1"></i>
+                                                    Progress
+                                                </button>
+                                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-clipboard-list mr-1"></i>
+                                                    Program
+                                                </button>
+                                            </div>
+                                            <div class="flex space-x-2">
+                                                <button class="btn-click text-gray-400 hover:text-olympic transition-colors">
+                                                    <i class="fas fa-comment-alt"></i>
+                                                </button>
+                                                <button class="btn-click text-gray-400 hover:text-olympic transition-colors">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Athlete 3 -->
+                                    <div class="athlete-card bg-white border border-gray-100 rounded-lg p-4 hover:shadow-md">
+                                        <div class="flex items-start">
+                                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Athlete" class="w-12 h-12 rounded-full border-2 border-powerlifting">
+                                            <div class="ml-3 flex-1">
+                                                <div class="flex justify-between items-start">
+                                                    <div>
+                                                        <h4 class="font-medium">Michael Chen</h4>
+                                                        <p class="text-sm text-gray-500">Powerlifting | Week 9 of 16</p>
+                                                    </div>
+                                                    <span class="px-2 py-1 text-xs font-medium bg-green-100 text-success rounded-full">PR This Week</span>
+                                                </div>
+                                                <div class="mt-2 grid grid-cols-3 gap-2 text-center">
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Squat</p>
+                                                        <p class="font-medium">220kg</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Bench</p>
+                                                        <p class="font-medium">150kg</p>
+                                                    </div>
+                                                    <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                                        <p class="text-xs text-gray-500">Deadlift</p>
+                                                        <p class="font-medium">250kg</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                                            <div class="flex space-x-2">
+                                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-chart-line mr-1"></i>
+                                                    Progress
+                                                </button>
+                                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-clipboard-list mr-1"></i>
+                                                    Program
+                                                </button>
+                                            </div>
+                                            <div class="flex space-x-2">
+                                                <button class="btn-click text-gray-400 hover:text-powerlifting transition-colors">
+                                                    <i class="fas fa-comment-alt"></i>
+                                                </button>
+                                                <button class="btn-click text-gray-400 hover:text-powerlifting transition-colors">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Other tabs would go here with similar structure -->
+                                <div id="powerlifters" class="tab-content">
+                                    <!-- Powerlifter specific content -->
+                                </div>
+                                <div id="olympic" class="tab-content">
+                                    <!-- Olympic lifter specific content -->
+                                </div>
+                                <div id="needs-attention" class="tab-content">
+                                    <!-- Needs attention content -->
+                                </div>
+
+                                <div class="mt-4 flex justify-center">
+                                    <button class="btn-click px-4 py-2 bg-gray-100 text-coach rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                                        Load More Athletes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="coach-card rounded-xl shadow text-white p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-bold">Quick Actions</h3>
+                                <p class="mt-2 opacity-90">Manage your athletes and programs efficiently</p>
+                            </div>
+                            <div class="p-2 rounded-full bg-white bg-opacity-20 transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-2 gap-3">
+                            <button class="btn-click bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-3 flex flex-col items-center transition-all">
+                                <i class="fas fa-user-plus text-xl mb-2"></i>
+                                <span class="text-xs">Add Athlete</span>
+                            </button>
+                            <button class="btn-click bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-3 flex flex-col items-center transition-all">
+                                <i class="fas fa-clipboard text-xl mb-2"></i>
+                                <span class="text-xs">New Program</span>
+                            </button>
+                            <button class="btn-click bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-3 flex flex-col items-center transition-all">
+                                <i class="fas fa-chart-bar text-xl mb-2"></i>
+                                <span class="text-xs">Reports</span>
+                            </button>
+                            <button class="btn-click bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-3 flex flex-col items-center transition-all">
+                                <i class="fas fa-envelope text-xl mb-2"></i>
+                                <span class="text-xs">Messages</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Program Templates -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-dark">Program Templates</h2>
+                            <button class="text-coach text-sm font-medium hover:underline">View All</button>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div>
+                                    <h4 class="font-medium text-sm">Powerlifting Peak</h4>
+                                    <p class="text-xs text-gray-500">12 weeks</p>
+                                </div>
+                                <button class="btn-click text-gray-400 hover:text-coach transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div>
+                                    <h4 class="font-medium text-sm">Olympic Strength</h4>
+                                    <p class="text-xs text-gray-500">8 weeks</p>
+                                </div>
+                                <button class="btn-click text-gray-400 hover:text-olympic transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                                <div>
+                                    <h4 class="font-medium text-sm">Beginner Strength</h4>
+                                    <p class="text-xs text-gray-500">16 weeks</p>
+                                </div>
+                                <button class="btn-click text-gray-400 hover:text-primary transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn-click mt-4 w-full py-2 bg-gray-100 text-coach rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                            Create New Template
+                        </button>
+                    </div>
+
+                    <!-- Recent Messages -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-dark">Recent Messages</h2>
+                            <button class="text-coach text-sm font-medium hover:underline">View All</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start group">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-8 h-8 rounded-full border-2 border-transparent group-hover:border-coach transition-all">
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium group-hover:text-coach transition-colors">Alex Johnson</p>
+                                    <p class="text-xs text-gray-500 truncate">"Coach, I hit a PR on squats today! 180kg felt..."</p>
+                                </div>
+                                <span class="text-xs text-gray-400">2h ago</span>
+                            </div>
+                            <div class="flex items-start group">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-8 h-8 rounded-full border-2 border-transparent group-hover:border-olympic transition-all">
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium group-hover:text-olympic transition-colors">Sarah Williams</p>
+                                    <p class="text-xs text-gray-500 truncate">"Having trouble with my clean technique, can we..."</p>
+                                </div>
+                                <span class="text-xs text-gray-400">5h ago</span>
+                            </div>
+                            <div class="flex items-start group">
+                                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="w-8 h-8 rounded-full border-2 border-transparent group-hover:border-powerlifting transition-all">
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium group-hover:text-powerlifting transition-colors">Michael Chen</p>
+                                    <p class="text-xs text-gray-500 truncate">"Program is going great! When should we test..."</p>
+                                </div>
+                                <span class="text-xs text-gray-400">1d ago</span>
+                            </div>
+                        </div>
+                        <button class="btn-click mt-4 w-full py-2 bg-coach text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                            New Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200">
+            <div class="flex justify-around items-center p-3">
+                <a href="#" class="nav-item active flex flex-col items-center">
+                    <i class="nav-icon fas fa-home text-lg"></i>
+                    <span class="text-xs mt-1">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center">
+                    <i class="nav-icon fas fa-users text-lg"></i>
+                    <span class="text-xs mt-1">Athletes</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center">
+                    <i class="nav-icon fas fa-clipboard text-lg"></i>
+                    <span class="text-xs mt-1">Programs</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center">
+                    <i class="nav-icon fas fa-envelope text-lg"></i>
+                    <span class="text-xs mt-1">Messages</span>
+                </a>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Tab functionality
         document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('[data-tab]');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
             // Mobile menu toggle
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const sidebar = document.querySelector('.sidebar');
+            const navItems = document.querySelectorAll('.nav-item');
             
-            mobileMenuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-
-            // Dashboard/Plan Creator view toggle
-            const createPlanBtn = document.getElementById('createPlanBtn');
-            const backToDashboardBtn = document.getElementById('backToDashboardBtn');
-            const dashboardView = document.getElementById('dashboardView');
-            const planCreatorView = document.getElementById('planCreatorView');
-            
-            createPlanBtn.addEventListener('click', function() {
-                dashboardView.classList.add('hidden');
-                planCreatorView.classList.remove('hidden');
-                addWeek(); // Add first week by default
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
             });
             
-            backToDashboardBtn.addEventListener('click', function() {
-                dashboardView.classList.remove('hidden');
-                planCreatorView.classList.add('hidden');
-            });
-
-            // Week and Exercise management
-            const weeksContainer = document.getElementById('weeksContainer');
-            const addWeekBtn = document.getElementById('addWeekBtn');
-            let weekCount = 0;
-            
-            function addWeek() {
-                weekCount++;
-                const weekId = `week-${weekCount}`;
-                
-                const weekElement = document.createElement('div');
-                weekElement.className = 'week-container mb-6 border border-gray-200 rounded-lg overflow-hidden';
-                weekElement.id = weekId;
-                
-                weekElement.innerHTML = `
-                    <div class="flex justify-between items-center bg-gray-50 p-4 border-b border-gray-200 cursor-pointer week-header">
-                        <h4 class="font-semibold text-gray-800">Week ${weekCount}</h4>
-                        <div class="flex space-x-2">
-                            <button class="text-gray-500 hover:text-gray-700 toggle-week">
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                            <button class="text-red-500 hover:text-red-700 delete-week" data-week="${weekId}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="p-4 week-content">
-                        <div class="exercises-container space-y-4">
-                            <!-- Exercises will be added here -->
-                        </div>
-                        <button class="add-exercise-btn mt-4 flex items-center px-3 py-1.5 bg-green-500 text-white text-sm rounded-lg shadow hover:bg-green-600 transition" data-week="${weekId}">
-                            <i class="fas fa-plus mr-1"></i> Add Exercise
-                        </button>
-                    </div>
-                `;
-                
-                weeksContainer.appendChild(weekElement);
-                
-                // Add first exercise by default
-                addExercise(weekId);
-                
-                // Set up event listeners for this week
-                setupWeekEventListeners(weekId);
-            }
-            
-            function addExercise(weekId) {
-                const weekElement = document.getElementById(weekId);
-                const exercisesContainer = weekElement.querySelector('.exercises-container');
-                
-                const exerciseId = `exercise-${Date.now()}`;
-                
-                const exerciseElement = document.createElement('div');
-                exerciseElement.className = 'exercise-row bg-gray-50 p-4 rounded-lg border border-gray-200';
-                exerciseElement.id = exerciseId;
-                
-                exerciseElement.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Exercise Name</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Squat">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Sets</label>
-                            <input type="number" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="3">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Reps</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="8-12">
-                        </div>
-                        <div class="flex items-end justify-between">
-                            <button class="delete-exercise text-red-500 hover:text-red-700" data-exercise="${exerciseId}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Description/Notes</label>
-                        <textarea rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Additional instructions..."></textarea>
-                    </div>
-                `;
-                
-                exercisesContainer.appendChild(exerciseElement);
-                
-                // Set up event listener for delete button
-                const deleteBtn = exerciseElement.querySelector('.delete-exercise');
-                deleteBtn.addEventListener('click', function() {
-                    exerciseElement.remove();
+            // Add click animation to all buttons with btn-click class
+            const buttons = document.querySelectorAll('.btn-click');
+            buttons.forEach(button => {
+                button.addEventListener('mousedown', function() {
+                    this.classList.add('active');
                 });
-            }
-            
-            function setupWeekEventListeners(weekId) {
-                const weekElement = document.getElementById(weekId);
-                const weekHeader = weekElement.querySelector('.week-header');
-                const weekContent = weekElement.querySelector('.week-content');
-                const toggleBtn = weekElement.querySelector('.toggle-week');
-                const deleteBtn = weekElement.querySelector('.delete-week');
-                const addExerciseBtn = weekElement.querySelector('.add-exercise-btn');
-                
-                // Toggle week content
-                weekHeader.addEventListener('click', function() {
-                    weekContent.classList.toggle('hidden');
-                    const icon = toggleBtn.querySelector('i');
-                    if (weekContent.classList.contains('hidden')) {
-                        icon.classList.replace('fa-chevron-down', 'fa-chevron-right');
-                    } else {
-                        icon.classList.replace('fa-chevron-right', 'fa-chevron-down');
-                    }
+                button.addEventListener('mouseup', function() {
+                    this.classList.remove('active');
                 });
-                
-                // Delete week
-                deleteBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    if (confirm('Are you sure you want to delete this week and all its exercises?')) {
-                        weekElement.remove();
-                        // Renumber remaining weeks
-                        renumberWeeks();
-                    }
+                button.addEventListener('mouseleave', function() {
+                    this.classList.remove('active');
                 });
-                
-                // Add exercise to this week
-                addExerciseBtn.addEventListener('click', function() {
-                    addExercise(weekId);
-                });
-            }
-            
-            function renumberWeeks() {
-                const weekElements = document.querySelectorAll('.week-container');
-                weekCount = 0;
-                
-                weekElements.forEach((element, index) => {
-                    weekCount++;
-                    const weekHeader = element.querySelector('.week-header h4');
-                    weekHeader.textContent = `Week ${weekCount}`;
-                });
-            }
-            
-            // Add Week button
-            addWeekBtn.addEventListener('click', addWeek);
-            
-            // Save Plan button
-            const savePlanBtn = document.getElementById('savePlanBtn');
-            savePlanBtn.addEventListener('click', function() {
-                const planName = document.getElementById('planName').value.trim();
-                
-                if (!planName) {
-                    alert('Please enter a plan name');
-                    return;
-                }
-                
-                // Here you would typically send the data to a server
-                alert(`Training Plan "${planName}" saved successfully!`);
-                dashboardView.classList.remove('hidden');
-                planCreatorView.classList.add('hidden');
-                
-                // Reset form
-                document.getElementById('planName').value = '';
-                document.getElementById('planDescription').value = '';
-                weeksContainer.innerHTML = '';
-                weekCount = 0;
             });
         });
     </script>

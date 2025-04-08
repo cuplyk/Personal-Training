@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Plan Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .slide-fade-enter-active, .slide-fade-leave-active {
+            transition: all 0.3s ease;
+        }
+        .slide-fade-enter-from, .slide-fade-leave-to {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .week-tab {
+            transition: all 0.2s ease;
+        }
+        .week-tab:hover:not(.active) {
+            background-color: #f3f4f6;
+        }
+        .exercise-card {
+            transition: all 0.2s ease;
+        }
+        .exercise-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Training Plan Editor</h1>
+            <p class="text-gray-600">Create and manage customized training programs with weekly breakdowns</p>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!-- Main Content -->
+            <div class="md:flex">
+                <!-- Athlete Selection Sidebar -->
+                <div class="md:w-1/3 bg-gray-800 text-white p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold">Select Athlete</h2>
+                        <button id="new-athlete-btn" class="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center">
+                            <i class="fas fa-plus mr-1"></i> New
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="relative">
+                            <input type="text" id="athlete-search" 
+                                   class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="Search athletes...">
+                            <div class="absolute right-3 top-2.5 text-gray-400">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="h-64 overflow-y-auto custom-scrollbar mb-6">
+                        <div class="space-y-2" id="athletes-list">
+                            <!-- Athlete cards will be populated here -->
+                            <div class="athlete-card p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer transition flex items-center" data-athlete-id="1">
+                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+                                    <span class="font-medium">JD</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium truncate">John Doe</h3>
+                                    <p class="text-xs text-gray-400 truncate">Football Player | 25 years</p>
+                                </div>
+                                <div class="text-xs text-gray-400 ml-2">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="athlete-card p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer transition flex items-center" data-athlete-id="2">
+                                <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center mr-3">
+                                    <span class="font-medium">AS</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium truncate">Alex Smith</h3>
+                                    <p class="text-xs text-gray-400 truncate">Basketball Player | 28 years</p>
+                                </div>
+                                <div class="text-xs text-gray-400 ml-2">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="athlete-card p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer transition flex items-center" data-athlete-id="3">
+                                <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center mr-3">
+                                    <span class="font-medium">MJ</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium truncate">Maria Johnson</h3>
+                                    <p class="text-xs text-gray-400 truncate">Swimmer | 22 years</p>
+                                </div>
+                                <div class="text-xs text-gray-400 ml-2">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="athlete-card p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer transition flex items-center" data-athlete-id="4">
+                                <div class="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center mr-3">
+                                    <span class="font-medium">TW</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium truncate">Taylor Wilson</h3>
+                                    <p class="text-xs text-gray-400 truncate">Runner | 26 years</p>
+                                </div>
+                                <div class="text-xs text-gray-400 ml-2">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-700 pt-4">
+                        <h3 class="text-sm font-medium text-gray-300 mb-2">Selected Athlete</h3>
+                        <div id="selected-athlete" class="flex items-center p-3 bg-gray-700 rounded-lg">
+                            <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-300">No athlete selected</h3>
+                                <p class="text-xs text-gray-400">Select an athlete to continue</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plan Editor -->
+                <div class="md:w-2/3 p-6">
+                    <div id="plan-form-container">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-semibold text-gray-800">Create New Training Plan</h2>
+                            <div class="flex space-x-2">
+                                <button id="copy-plan" class="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 flex items-center" title="Copy from existing plan">
+                                    <i class="fas fa-copy mr-1"></i> Copy
+                                </button>
+                                <button id="clear-plan" class="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 flex items-center">
+                                    <i class="fas fa-broom mr-1"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2" for="plan-name">
+                                    Plan Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="plan-name" 
+                                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       placeholder="e.g., 12-Week Strength Program">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2" for="plan-duration">
+                                    Duration (weeks) <span class="text-red-500">*</span>
+                                </label>
+                                <select id="plan-duration" 
+                                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <option value="4">4 weeks</option>
+                                    <option value="6">6 weeks</option>
+                                    <option value="8" selected>8 weeks</option>
+                                    <option value="12">12 weeks</option>
+                                    <option value="16">16 weeks</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-medium mb-2" for="plan-description">
+                                Description
+                            </label>
+                            <textarea id="plan-description" rows="3"
+                                      class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                      placeholder="Describe the purpose, goals, and any special considerations for this training plan..."></textarea>
+                        </div>
+                        
+                        <!-- Week Navigation -->
+                        <div class="mb-4">
+                            <div class="flex overflow-x-auto pb-2 custom-scrollbar">
+                                <div id="week-tabs" class="flex space-x-1">
+                                    <!-- Week tabs will be generated here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Week Content -->
+                        <div id="week-content" class="mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-medium text-gray-800">
+                                    <span id="current-week-title">Week 1</span>
+                                    <span class="text-sm text-gray-500 ml-2" id="week-dates"></span>
+                                </h3>
+                                <button id="add-exercise" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center">
+                                    <i class="fas fa-plus mr-2"></i> Add Exercise
+                                </button>
+                            </div>
+                            
+                            <div id="exercises-container" class="space-y-4">
+                                <!-- Exercises will be added here dynamically -->
+                                <div class="text-center py-12 text-gray-400" id="no-exercises-message">
+                                    <i class="fas fa-dumbbell text-4xl mb-3 opacity-30"></i>
+                                    <p class="text-gray-500">No exercises added for this week</p>
+                                    <button id="add-first-exercise" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center mx-auto">
+                                        <i class="fas fa-plus mr-2"></i> Add First Exercise
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between border-t pt-4">
+                            <div class="text-sm text-gray-500">
+                                <span id="exercise-count">0</span> exercises across <span id="week-count">0</span> weeks
+                            </div>
+                            <div class="flex space-x-3">
+                                <button id="cancel-plan" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+                                    Cancel
+                                </button>
+                                <button id="save-plan" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center">
+                                    <i class="fas fa-save mr-2"></i> Save Plan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Athlete Modal -->
+    <div id="new-athlete-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">Add New Athlete</h3>
+                <button id="close-athlete-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-1" for="athlete-name">
+                        Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="athlete-name" 
+                           class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                           placeholder="John Doe">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-1" for="athlete-age">
+                            Age <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="athlete-age" min="12" max="99"
+                               class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                               placeholder="25">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-1" for="athlete-sport">
+                            Sport <span class="text-red-500">*</span>
+                        </label>
+                        <select id="athlete-sport" 
+                                class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="">Select sport</option>
+                            <option value="Football">Football</option>
+                            <option value="Basketball">Basketball</option>
+                            <option value="Swimming">Swimming</option>
+                            <option value="Running">Running</option>
+                            <option value="Weightlifting">Weightlifting</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-1" for="athlete-notes">
+                        Notes
+                    </label>
+                    <textarea id="athlete-notes" rows="2"
+                              class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              placeholder="Any relevant information..."></textarea>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancel-athlete" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+                    Cancel
+                </button>
+                <button id="save-athlete" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    Save Athlete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                    <i class="fas fa-check text-blue-500"></i>
+                </div>
+                <h3 class="text-lg font-medium">Plan Saved Successfully!</h3>
+            </div>
+            <p class="text-gray-600 mb-6">The training plan has been saved and assigned to the selected athlete.</p>
+            <div class="flex justify-end">
+                <button id="modal-close" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Athlete selection
+            const athleteCards = document.querySelectorAll('.athlete-card');
+            const selectedAthleteDisplay = document.getElementById('selected-athlete');
+            const athleteSearch = document.getElementById('athlete-search');
+            const athletesList = document.getElementById('athletes-list');
+            
+            // Plan variables
+            let selectedAthleteId = null;
+            let currentWeek = 1;
+            let exerciseCount = 0;
+            let totalExercises = 0;
+            const planDuration = document.getElementById('plan-duration');
+            const weekTabs = document.getElementById('week-tabs');
+            const exercisesContainer = document.getElementById('exercises-container');
+            const noExercisesMessage = document.getElementById('no-exercises-message');
+            const currentWeekTitle = document.getElementById('current-week-title');
+            const weekDates = document.getElementById('week-dates');
+            const exerciseCountDisplay = document.getElementById('exercise-count');
+            const weekCountDisplay = document.getElementById('week-count');
+            
+            // Modal elements
+            const newAthleteModal = document.getElementById('new-athlete-modal');
+            const newAthleteBtn = document.getElementById('new-athlete-btn');
+            const closeAthleteModal = document.getElementById('close-athlete-modal');
+            const saveAthleteBtn = document.getElementById('save-athlete');
+            const cancelAthleteBtn = document.getElementById('cancel-athlete');
+            const confirmationModal = document.getElementById('confirmation-modal');
+            const modalCloseBtn = document.getElementById('modal-close');
+            
+            // Initialize the plan
+            initializePlan();
+            
+            // Athlete selection
+            athleteCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove active class from all cards
+                    athleteCards.forEach(c => c.classList.remove('bg-blue-600', 'hover:bg-blue-600'));
+                    
+                    // Add active class to clicked card
+                    this.classList.add('bg-blue-600', 'hover:bg-blue-600');
+                    
+                    // Get athlete data
+                    selectedAthleteId = this.getAttribute('data-athlete-id');
+                    const name = this.querySelector('h3').textContent;
+                    const details = this.querySelector('p').textContent;
+                    const initials = this.querySelector('span').textContent;
+                    const bgColor = this.querySelector('div').classList[3]; // Get the bg color class
+                    
+                    // Update selected athlete display
+                    selectedAthleteDisplay.innerHTML = `
+                        <div class="w-10 h-10 rounded-full ${bgColor} flex items-center justify-center mr-3">
+                            <span class="font-medium text-white">${initials}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-white">${name}</h3>
+                            <p class="text-xs text-gray-300">${details}</p>
+                        </div>
+                    `;
+                });
+            });
+            
+            // Search functionality
+            athleteSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                athleteCards.forEach(card => {
+                    const name = card.querySelector('h3').textContent.toLowerCase();
+                    const details = card.querySelector('p').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || details.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Plan duration change
+            planDuration.addEventListener('change', function() {
+                initializePlan();
+            });
+            
+            // Week tab navigation
+            weekTabs.addEventListener('click', function(e) {
+                if (e.target.classList.contains('week-tab')) {
+                    const week = parseInt(e.target.getAttribute('data-week'));
+                    showWeek(week);
+                }
+            });
+            
+            // Exercise management
+            document.getElementById('add-exercise').addEventListener('click', addExercise);
+            document.getElementById('add-first-exercise').addEventListener('click', addExercise);
+            
+            // Delete exercise (using event delegation)
+            exercisesContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('delete-exercise') || e.target.closest('.delete-exercise')) {
+                    const button = e.target.classList.contains('delete-exercise') ? e.target : e.target.closest('.delete-exercise');
+                    const exerciseId = button.getAttribute('data-exercise-id');
+                    const exerciseElement = document.getElementById(exerciseId);
+                    
+                    // Add fade-out animation
+                    exerciseElement.style.opacity = '0';
+                    exerciseElement.style.transform = 'translateY(-10px)';
+                    exerciseElement.style.transition = 'all 0.3s ease';
+                    
+                    // Remove after animation completes
+                    setTimeout(() => {
+                        exerciseElement.remove();
+                        exerciseCount--;
+                        totalExercises--;
+                        updateExerciseCount();
+                        
+                        // Show "no exercises" message if all are deleted
+                        if (exerciseCount === 0) {
+                            noExercisesMessage.style.display = 'block';
+                        }
+                    }, 300);
+                }
+            });
+            
+            // Form submission
+            document.getElementById('save-plan').addEventListener('click', savePlan);
+            document.getElementById('cancel-plan').addEventListener('click', cancelPlan);
+            document.getElementById('clear-plan').addEventListener('click', clearPlan);
+            
+            // Modal controls
+            newAthleteBtn.addEventListener('click', () => newAthleteModal.classList.remove('hidden'));
+            closeAthleteModal.addEventListener('click', () => newAthleteModal.classList.add('hidden'));
+            cancelAthleteBtn.addEventListener('click', () => newAthleteModal.classList.add('hidden'));
+            modalCloseBtn.addEventListener('click', () => confirmationModal.classList.add('hidden'));
+            
+            saveAthleteBtn.addEventListener('click', function() {
+                const name = document.getElementById('athlete-name').value;
+                const age = document.getElementById('athlete-age').value;
+                const sport = document.getElementById('athlete-sport').value;
+                
+                if (!name || !age || !sport) {
+                    alert('Please fill all required fields');
+                    return;
+                }
+                
+                // Generate a new athlete ID
+                const newId = document.querySelectorAll('.athlete-card').length + 1;
+                
+                // Create initials
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                // Random color for avatar
+                const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-yellow-500', 'bg-red-500', 'bg-indigo-500'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Create new athlete card
+                const athleteHTML = `
+                    <div class="athlete-card p-3 rounded-lg bg-gray-700 hover:bg-gray-600 cursor-pointer transition flex items-center" data-athlete-id="${newId}">
+                        <div class="w-10 h-10 rounded-full ${randomColor} flex items-center justify-center mr-3">
+                            <span class="font-medium">${initials.substring(0, 2)}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-medium truncate">${name}</h3>
+                            <p class="text-xs text-gray-400 truncate">${sport} | ${age} years</p>
+                        </div>
+                        <div class="text-xs text-gray-400 ml-2">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                `;
+                
+                // Add to the top of the list
+                athletesList.insertAdjacentHTML('afterbegin', athleteHTML);
+                
+                // Clear form and close modal
+                document.getElementById('athlete-name').value = '';
+                document.getElementById('athlete-age').value = '';
+                document.getElementById('athlete-sport').value = '';
+                document.getElementById('athlete-notes').value = '';
+                newAthleteModal.classList.add('hidden');
+                
+                // Add event listener to the new card
+                const newCard = athletesList.querySelector('.athlete-card');
+                newCard.addEventListener('click', function() {
+                    athleteCards.forEach(c => c.classList.remove('bg-blue-600', 'hover:bg-blue-600'));
+                    this.classList.add('bg-blue-600', 'hover:bg-blue-600');
+                    
+                    selectedAthleteId = this.getAttribute('data-athlete-id');
+                    selectedAthleteDisplay.innerHTML = `
+                        <div class="w-10 h-10 rounded-full ${randomColor} flex items-center justify-center mr-3">
+                            <span class="font-medium text-white">${initials.substring(0, 2)}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-white">${name}</h3>
+                            <p class="text-xs text-gray-300">${sport} | ${age} years</p>
+                        </div>
+                    `;
+                });
+            });
+            
+            // Initialize the plan with week tabs
+            function initializePlan() {
+                const duration = parseInt(planDuration.value);
+                weekTabs.innerHTML = '';
+                
+                // Create week tabs
+                for (let i = 1; i <= duration; i++) {
+                    const activeClass = i === 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100';
+                    weekTabs.insertAdjacentHTML('beforeend', `
+                        <button class="week-tab px-4 py-2 rounded-lg font-medium ${activeClass}" data-week="${i}">
+                            Week ${i}
+                        </button>
+                    `);
+                }
+                
+                // Update week count display
+                weekCountDisplay.textContent = duration;
+                
+                // Show first week by default
+                showWeek(1);
+            }
+            
+            // Show exercises for a specific week
+            function showWeek(week) {
+                currentWeek = week;
+                
+                // Update active tab
+                document.querySelectorAll('.week-tab').forEach(tab => {
+                    if (parseInt(tab.getAttribute('data-week')) === week) {
+                        tab.classList.add('bg-blue-500', 'text-white');
+                        tab.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-100');
+                    } else {
+                        tab.classList.remove('bg-blue-500', 'text-white');
+                        tab.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-100');
+                    }
+                });
+                
+                // Update week title
+                currentWeekTitle.textContent = `Week ${week}`;
+                
+                // Calculate and display week dates (example using current date)
+                const today = new Date();
+                const startDate = new Date(today);
+                startDate.setDate(today.getDate() + (week - 1) * 7);
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 6);
+                
+                const options = { month: 'short', day: 'numeric' };
+                weekDates.textContent = `(${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)})`;
+                
+                // For now, we'll just show a message - in a real app, you'd fetch exercises for this week
+                exercisesContainer.innerHTML = `
+                    <div class="text-center py-12 text-gray-400" id="no-exercises-message">
+                        <i class="fas fa-dumbbell text-4xl mb-3 opacity-30"></i>
+                        <p class="text-gray-500">No exercises added for this week</p>
+                        <button id="add-first-exercise" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center mx-auto">
+                            <i class="fas fa-plus mr-2"></i> Add First Exercise
+                        </button>
+                    </div>
+                `;
+                document.getElementById('add-first-exercise').addEventListener('click', addExercise);
+                
+                // Reset exercise count for this week
+                exerciseCount = 0;
+            }
+            
+            // Add a new exercise to the current week
+            function addExercise() {
+                exerciseCount++;
+                totalExercises++;
+                
+                // Hide "no exercises" message if it's the first one
+                if (document.getElementById('no-exercises-message')) {
+                    document.getElementById('no-exercises-message').style.display = 'none';
+                } else if (exerciseCount === 1) {
+                    exercisesContainer.innerHTML = '';
+                }
+                
+                const exerciseId = `exercise-${Date.now()}`;
+                const exerciseNumber = exerciseCount;
+                
+                const exerciseHTML = `
+                    <div id="${exerciseId}" class="exercise-card bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="font-medium text-gray-800">Exercise #${exerciseNumber}</h4>
+                            <button class="delete-exercise text-gray-400 hover:text-red-500 transition" data-exercise-id="${exerciseId}" title="Delete exercise">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-1" for="${exerciseId}-name">
+                                    Exercise Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="${exerciseId}-name" 
+                                       class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                       placeholder="e.g., Bench Press">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-1" for="${exerciseId}-category">
+                                    Category
+                                </label>
+                                <select id="${exerciseId}-category" 
+                                        class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="">Select category</option>
+                                    <option value="Strength">Strength</option>
+                                    <option value="Cardio">Cardio</option>
+                                    <option value="Mobility">Mobility</option>
+                                    <option value="Plyometrics">Plyometrics</option>
+                                    <option value="Recovery">Recovery</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-1" for="${exerciseId}-sets">
+                                    Sets <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="${exerciseId}-sets" min="1" max="20" step="1"
+                                       class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                       placeholder="e.g., 3">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-1" for="${exerciseId}-reps">
+                                    Reps <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="${exerciseId}-reps"
+                                       class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                       placeholder="e.g., 8-12 or 30s (for time)">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-1" for="${exerciseId}-rest">
+                                    Rest Interval
+                                </label>
+                                <input type="text" id="${exerciseId}-rest"
+                                       class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                       placeholder="e.g., 60s or 2min">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <label class="block text-gray-700 text-sm font-medium mb-1" for="${exerciseId}-description">
+                                Instructions
+                            </label>
+                            <textarea id="${exerciseId}-description" rows="2"
+                                      class="w-full px-3 py-1.5 text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                      placeholder="Detailed instructions, cues, or modifications..."></textarea>
+                        </div>
+                    </div>
+                `;
+                
+                exercisesContainer.insertAdjacentHTML('beforeend', exerciseHTML);
+                updateExerciseCount();
+                
+                // Scroll to the newly added exercise
+                document.getElementById(exerciseId).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Update the exercise count display
+            function updateExerciseCount() {
+                exerciseCountDisplay.textContent = totalExercises;
+            }
+            
+            // Save the plan
+            function savePlan() {
+                // Basic validation
+                const planName = document.getElementById('plan-name').value;
+                
+                if (!planName) {
+                    alert('Please enter a plan name');
+                    return;
+                }
+                
+                if (!selectedAthleteId) {
+                    alert('Please select an athlete');
+                    return;
+                }
+                
+                if (totalExercises === 0) {
+                    alert('Please add at least one exercise');
+                    return;
+                }
+                
+                // In a real app, you would collect all the data and send it to your backend
+                // For this demo, we'll just show a success message
+                confirmationModal.classList.remove('hidden');
+            }
+            
+            // Cancel the plan
+            function cancelPlan() {
+                if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+                    // Reset form
+                    document.getElementById('plan-name').value = '';
+                    document.getElementById('plan-description').value = '';
+                    
+                    // Reset athlete selection
+                    athleteCards.forEach(c => c.classList.remove('bg-blue-600', 'hover:bg-blue-600'));
+                    selectedAthleteId = null;
+                    selectedAthleteDisplay.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-300">No athlete selected</h3>
+                            <p class="text-xs text-gray-400">Select an athlete to continue</p>
+                        </div>
+                    `;
+                    
+                    // Reset plan
+                    initializePlan();
+                    totalExercises = 0;
+                    updateExerciseCount();
+                }
+            }
+            
+            // Clear the plan (keep athlete selection)
+            function clearPlan() {
+                if (confirm('Are you sure you want to clear this plan? All exercises will be removed.')) {
+                    // Reset form fields but keep athlete selection
+                    document.getElementById('plan-name').value = '';
+                    document.getElementById('plan-description').value = '';
+                    
+                    // Reset plan
+                    initializePlan();
+                    totalExercises = 0;
+                    updateExerciseCount();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

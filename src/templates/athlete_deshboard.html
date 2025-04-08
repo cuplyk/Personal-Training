@@ -1,350 +1,711 @@
-!DOCTYPE html
-html lang=en
-head
-    meta charset=UTF-8
-    meta name=viewport content=width=device-width, initial-scale=1.0
-    titleAthlete Dashboardtitle
-    script src=httpscdn.tailwindcss.comscript
-    link rel=stylesheet href=httpscdnjs.cloudflare.comajaxlibsfont-awesome6.4.0cssall.min.css
-    style
-        @import url('httpsfonts.googleapis.comcss2family=Interwght@300;400;500;600;700&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athlete Dashboard | Personal Training Plan Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        accent: '#f59e0b',
+                        dark: '#1e293b',
+                        light: '#f8fafc',
+                        powerlifting: '#8b5cf6',
+                        olympic: '#ec4899',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444'
+                    },
+                    transitionProperty: {
+                        'size': 'width, height, transform',
+                        'shadow': 'box-shadow'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         body {
-            font-family 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         
-        .sidebar {
-            transition all 0.3s ease;
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
         }
         
-        @media (max-width 768px) {
-            .sidebar {
-                transform translateX(-100%);
-                position fixed;
-                z-index 50;
-                height 100vh;
+        .motivational-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .motivational-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+        
+        .exercise-card {
+            transition: all 0.2s ease;
+        }
+        
+        .exercise-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .stats-card {
+            transition: all 0.2s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4), 0 2px 4px -1px rgba(59, 130, 246, 0.06);
+        }
+        
+        .btn-secondary {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .btn-click:active {
+            transform: scale(0.98);
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            color: #3b82f6;
+        }
+        
+        .nav-item.active {
+            color: #3b82f6;
+        }
+        
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+        
+        .nav-icon {
+            transition: all 0.2s ease;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
             }
-            .sidebar.open {
-                transform translateX(0);
-            }
-            .overlay {
-                display none;
-                position fixed;
-                top 0;
-                left 0;
-                right 0;
-                bottom 0;
-                background-color rgba(0, 0, 0, 0.5);
-                z-index 40;
-            }
-            .overlay.open {
-                display block;
+            50% {
+                opacity: 0.5;
             }
         }
         
-        .progress-bar {
-            height 8px;
-            border-radius 4px;
-            background-color #e5e7eb;
+        .pr-badge {
+            animation: pulse 1.5s infinite;
         }
         
-        .progress-fill {
-            height 100%;
-            border-radius 4px;
-            background-color #3b82f6;
-            transition width 0.3s ease;
+        @media (max-width: 768px) {
+            .mobile-stack {
+                flex-direction: column;
+            }
         }
-        
-        .exercise-itemhover {
-            background-color #f8fafc;
-        }
-        
-        .calendar-day {
-            width calc(100%  7);
-            aspect-ratio 1;
-        }
-        
-        .calendar-day.active {
-            background-color #3b82f6;
-            color white;
-        }
-    style
-head
-body class=bg-gray-50
-    div class=flex h-screen overflow-hidden
-        !-- Mobile menu button --
-        button id=mobile-menu-button class=mdhidden fixed top-4 left-4 z-50 bg-blue-500 text-white p-2 rounded-lg
-            i class=fas fa-barsi
-        button
-        
-        !-- Overlay for mobile menu --
-        div id=overlay class=overlaydiv
-        
-        !-- Sidebar --
-        div id=sidebar class=sidebar bg-white w-64 border-r border-gray-200 flex flex-col
-            div class=p-4 border-b border-gray-200
-                h1 class=text-2xl font-bold text-blue-600AthleteProh1
-                p class=text-sm text-gray-500Performance Dashboardp
-            div
-            
-            div class=flex-1 overflow-y-auto p-4
-                nav
-                    ul class=space-y-2
-                        li
-                            a href=# class=flex items-center p-3 rounded-lg bg-blue-50 text-blue-600 font-medium
-                                i class=fas fa-tachometer-alt mr-3 text-blue-500i
-                                Dashboard
-                            a
-                        li
-                        li
-                            a href=# class=flex items-center p-3 rounded-lg text-gray-600 hoverbg-blue-50 hovertext-blue-600 transition
-                                i class=fas fa-chart-line mr-3i
-                                Progress
-                            a
-                        li
-                        li
-                            a href=# class=flex items-center p-3 rounded-lg text-gray-600 hoverbg-blue-50 hovertext-blue-600 transition
-                                i class=fas fa-dumbbell mr-3i
-                                Workouts
-                            a
-                        li
-                        li
-                            a href=# class=flex items-center p-3 rounded-lg text-gray-600 hoverbg-blue-50 hovertext-blue-600 transition
-                                i class=fas fa-cog mr-3i
-                                Settings
-                            a
-                        li
-                    ul
-                nav
-            div
-            
-            div class=p-4 border-t border-gray-200
-                div class=flex items-center
-                    img src=httpsrandomuser.meapiportraitsmen32.jpg alt=User class=w-10 h-10 rounded-full mr-3
-                    div
-                        p class=font-mediumJohn Athletep
-                        p class=text-sm text-gray-500Professional Runnerp
-                    div
-                div
-            div
-        div
-        
-        !-- Main content --
-        div class=flex-1 overflow-auto
-            div class=p-6 mdp-8
-                div class=mb-8
-                    h2 class=text-2xl font-bold text-gray-800 mb-2Welcome back, John!h2
-                    p class=text-gray-600Here's your current training planp
-                div
-                
-                !-- Stats Cards --
-                div class=grid grid-cols-1 mdgrid-cols-3 gap-4 mb-8
-                    div class=bg-white p-6 rounded-xl shadow-sm border border-gray-100
-                        div class=flex justify-between items-start
-                            div
-                                p class=text-sm text-gray-500Current Weekp
-                                h3 class=text-2xl font-bold text-gray-800Week 4h3
-                            div
-                            div class=bg-blue-100 p-3 rounded-lg
-                                i class=fas fa-calendar-week text-blue-500i
-                            div
-                        div
-                    div
-                    
-                    div class=bg-white p-6 rounded-xl shadow-sm border border-gray-100
-                        div class=flex justify-between items-start
-                            div
-                                p class=text-sm text-gray-500Completion Ratep
-                                h3 class=text-2xl font-bold text-gray-80078%h3
-                            div
-                            div class=bg-blue-100 p-3 rounded-lg
-                                i class=fas fa-check-circle text-blue-500i
-                            div
-                        div
-                    div
-                    
-                    div class=bg-white p-6 rounded-xl shadow-sm border border-gray-100
-                        div class=flex justify-between items-start
-                            div
-                                p class=text-sm text-gray-500Next Workoutp
-                                h3 class=text-2xl font-bold text-gray-800Speed Runh3
-                            div
-                            div class=bg-blue-100 p-3 rounded-lg
-                                i class=fas fa-running text-blue-500i
-                            div
-                        div
-                    div
-                div
-                
-                !-- Training Plan --
-                div class=bg-white rounded-xl shadow-sm border border-gray-100 mb-8
-                    div class=p-6 border-b border-gray-100
-                        h3 class=text-lg font-semibold text-gray-800Today's Workout Endurance Trainingh3
-                        p class=text-sm text-gray-500Estimated duration 75 minutesp
-                    div
-                    
-                    div class=divide-y divide-gray-100
-                        !-- Exercise 1 --
-                        div class=exercise-item p-4 flex items-center hoverbg-gray-50 transition
-                            div class=flex items-center mr-4
-                                input type=checkbox class=h-5 w-5 text-blue-500 rounded border-gray-300 focusring-blue-500
-                            div
-                            div class=flex-1
-                                h4 class=font-medium text-gray-800Warm-up Jogh4
-                                p class=text-sm text-gray-50015 minutes at easy pacep
-                            div
-                            div class=text-sm text-gray-5002.5 kmdiv
-                        div
-                        
-                        !-- Exercise 2 --
-                        div class=exercise-item p-4 flex items-center hoverbg-gray-50 transition
-                            div class=flex items-center mr-4
-                                input type=checkbox class=h-5 w-5 text-blue-500 rounded border-gray-300 focusring-blue-500
-                            div
-                            div class=flex-1
-                                h4 class=font-medium text-gray-800Interval Trainingh4
-                                p class=text-sm text-gray-5006 x 400m at 5K pace with 90s recoveryp
-                            div
-                            div class=text-sm text-gray-5002.4 kmdiv
-                        div
-                        
-                        !-- Exercise 3 --
-                        div class=exercise-item p-4 flex items-center hoverbg-gray-50 transition
-                            div class=flex items-center mr-4
-                                input type=checkbox class=h-5 w-5 text-blue-500 rounded border-gray-300 focusring-blue-500
-                            div
-                            div class=flex-1
-                                h4 class=font-medium text-gray-800Cool Downh4
-                                p class=text-sm text-gray-50010 minutes easy jogp
-                            div
-                            div class=text-sm text-gray-5001.5 kmdiv
-                        div
-                        
-                        !-- Exercise 4 --
-                        div class=exercise-item p-4 flex items-center hoverbg-gray-50 transition
-                            div class=flex items-center mr-4
-                                input type=checkbox class=h-5 w-5 text-blue-500 rounded border-gray-300 focusring-blue-500
-                            div
-                            div class=flex-1
-                                h4 class=font-medium text-gray-800Core Workouth4
-                                p class=text-sm text-gray-5003 sets of planks and leg raisesp
-                            div
-                            div class=text-sm text-gray-50015 mindiv
-                        div
-                    div
-                    
-                    div class=p-4 border-t border-gray-100 flex justify-end
-                        button class=bg-blue-500 hoverbg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition
-                            Complete Workout
-                        button
-                    div
-                div
-                
-                !-- Progress Section --
-                div class=grid grid-cols-1 lggrid-cols-2 gap-8
-                    !-- Progress Tracker --
-                    div class=bg-white rounded-xl shadow-sm border border-gray-100 p-6
-                        div class=flex justify-between items-center mb-4
-                            h3 class=text-lg font-semibold text-gray-800Weekly Progressh3
-                            span class=text-sm font-medium text-blue-50078% completespan
-                        div
-                        
-                        div class=progress-bar mb-2
-                            div class=progress-fill style=width 78%div
-                        div
-                        
-                        div class=flex justify-between text-sm text-gray-500
-                            spanMonspan
-                            spanTuespan
-                            spanWedspan
-                            spanThuspan
-                            spanFrispan
-                            spanSatspan
-                            spanSunspan
-                        div
-                        
-                        div class=grid grid-cols-7 gap-1 mt-2
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full bg-blue-100 text-blue-600✓div
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full bg-blue-100 text-blue-600✓div
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full bg-blue-100 text-blue-600✓div
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full bg-blue-500 text-white✓div
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full border border-gray-200—div
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full border border-gray-200—div
-                            div class=calendar-day flex items-center justify-center text-sm rounded-full border border-gray-200—div
-                        div
-                    div
-                    
-                    !-- Upcoming Workouts --
-                    div class=bg-white rounded-xl shadow-sm border border-gray-100 p-6
-                        h3 class=text-lg font-semibold text-gray-800 mb-4Upcoming Workoutsh3
-                        
-                        div class=space-y-4
-                            div class=flex items-start
-                                div class=bg-blue-100 text-blue-500 p-2 rounded-lg mr-3
-                                    i class=fas fa-runningi
-                                div
-                                div
-                                    h4 class=font-medium text-gray-800Speed Runh4
-                                    p class=text-sm text-gray-500Tomorrow, 630 AMp
-                                div
-                            div
-                            
-                            div class=flex items-start
-                                div class=bg-blue-100 text-blue-500 p-2 rounded-lg mr-3
-                                    i class=fas fa-walkingi
-                                div
-                                div
-                                    h4 class=font-medium text-gray-800Recovery Runh4
-                                    p class=text-sm text-gray-500Friday, 700 AMp
-                                div
-                            div
-                            
-                            div class=flex items-start
-                                div class=bg-blue-100 text-blue-500 p-2 rounded-lg mr-3
-                                    i class=fas fa-dumbbelli
-                                div
-                                div
-                                    h4 class=font-medium text-gray-800Strength Trainingh4
-                                    p class=text-sm text-gray-500Saturday, 800 AMp
-                                div
-                            div
-                        div
-                    div
-                div
-            div
-        div
-    div
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-10">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold transform hover:rotate-12 transition-transform">
+                        <span class="transform hover:scale-110 transition-transform">AT</span>
+                    </div>
+                    <h1 class="ml-3 text-xl font-bold text-dark">Athlete Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-600 hover:text-primary relative transition-colors">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                    </button>
+                    <button class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-comment-dots text-xl"></i>
+                    </button>
+                    <div class="flex items-center group">
+                        <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="User" class="w-8 h-8 rounded-full border-2 border-transparent group-hover:border-primary transition-all">
+                        <span class="ml-2 text-sm font-medium hidden md:inline">Alex Johnson</span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    script
-         Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-        
-        mobileMenuButton.addEventListener('click', () = {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('open');
-        });
-        
-        overlay.addEventListener('click', () = {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('open');
-        });
-        
-         Checkbox functionality
-        const checkboxes = document.querySelectorAll('input[type=checkbox]');
-        checkboxes.forEach(checkbox = {
-            checkbox.addEventListener('change', function() {
-                const exerciseItem = this.closest('.exercise-item');
-                if (this.checked) {
-                    exerciseItem.classList.add('bg-blue-50');
-                    exerciseItem.querySelector('h4').classList.add('line-through', 'text-gray-400');
-                } else {
-                    exerciseItem.classList.remove('bg-blue-50');
-                    exerciseItem.querySelector('h4').classList.remove('line-through', 'text-gray-400');
+        <!-- Main Content -->
+        <main class="flex-1 container mx-auto px-4 py-6">
+            <!-- Welcome & Stats -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-dark">Welcome back, <span class="text-primary">Alex</span>!</h2>
+                        <p class="text-gray-600">"Discipline is the bridge between goals and accomplishment."</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-2">
+                        <button class="btn-primary btn-click px-4 py-2 bg-primary text-white rounded-lg flex items-center">
+                            <i class="fas fa-plus mr-2"></i>
+                            <span>Log Workout</span>
+                        </button>
+                        <button class="btn-secondary btn-click px-4 py-2 bg-white border border-gray-300 rounded-lg flex items-center">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-primary">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Current Program</p>
+                                <h3 class="text-xl font-bold mt-1">Powerlifting Prep</h3>
+                            </div>
+                            <div class="p-2 rounded-lg bg-blue-100 text-primary transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-dumbbell"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>Week 3 of 12</span>
+                                <span>25%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                                <div class="bg-primary h-2 rounded-full transition-all duration-500" style="width: 25%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-secondary">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Next Workout</p>
+                                <h3 class="text-xl font-bold mt-1">Squat Focus</h3>
+                            </div>
+                            <div class="p-2 rounded-lg bg-green-100 text-secondary transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-600 flex items-center">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>Today, 5:30 PM</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-accent">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Recent PR</p>
+                                <h3 class="text-xl font-bold mt-1">210kg</h3>
+                                <p class="text-sm text-gray-500">Deadlift</p>
+                            </div>
+                            <div class="p-2 rounded-lg bg-yellow-100 text-accent transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-green-600 font-medium flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                +5kg from last month
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stats-card bg-white rounded-xl shadow p-5 hover:border-l-4 hover:border-purple-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Coach Message</p>
+                                <h3 class="text-xl font-bold mt-1">New Feedback</h3>
+                            </div>
+                            <div class="p-2 rounded-lg bg-purple-100 text-purple-600 transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-comment-alt"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-sm text-gray-600 truncate">
+                                "Great job on your last session! Let's focus on..."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Today's Workout -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-dark">Today's Workout</h2>
+                            <button class="text-primary text-sm font-medium hover:underline">View Full Program</button>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold">Squat Focus Day</h3>
+                                    <p class="text-sm text-gray-500">Week 3, Day 2 - Lower Body</p>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>~90 min</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Exercise 1 -->
+                                <div class="exercise-card border border-gray-100 rounded-lg p-4 hover:border-primary">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Back Squat</h4>
+                                            <p class="text-sm text-gray-500">Primary Movement</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-primary rounded-full transform hover:scale-105 transition-transform">Powerlifting</span>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Sets</p>
+                                            <p class="font-medium">5</p>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Reps</p>
+                                            <p class="font-medium">5</p>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Weight</p>
+                                            <p class="font-medium">140kg</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <button class="text-xs text-primary font-medium flex items-center hover:underline">
+                                            <i class="fas fa-play-circle mr-1"></i>
+                                            <span>Demo Video</span>
+                                        </button>
+                                        <div class="flex space-x-2">
+                                            <button class="btn-primary btn-click px-3 py-1 bg-primary text-white text-xs rounded-full">
+                                                Start
+                                            </button>
+                                            <button class="btn-secondary btn-click px-3 py-1 bg-white border border-gray-300 text-xs rounded-full">
+                                                Notes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Exercise 2 -->
+                                <div class="exercise-card border border-gray-100 rounded-lg p-4 hover:border-pink-500">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Front Squat</h4>
+                                            <p class="text-sm text-gray-500">Secondary Movement</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium bg-pink-100 text-pink-600 rounded-full transform hover:scale-105 transition-transform">Olympic</span>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Sets</p>
+                                            <p class="font-medium">4</p>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Reps</p>
+                                            <p class="font-medium">6</p>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Weight</p>
+                                            <p class="font-medium">100kg</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <button class="text-xs text-primary font-medium flex items-center hover:underline">
+                                            <i class="fas fa-play-circle mr-1"></i>
+                                            <span>Demo Video</span>
+                                        </button>
+                                        <div class="flex space-x-2">
+                                            <button class="btn-primary btn-click px-3 py-1 bg-primary text-white text-xs rounded-full">
+                                                Start
+                                            </button>
+                                            <button class="btn-secondary btn-click px-3 py-1 bg-white border border-gray-300 text-xs rounded-full">
+                                                Notes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Exercise 3 -->
+                                <div class="exercise-card border border-gray-100 rounded-lg p-4 hover:border-primary">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-medium">Romanian Deadlift</h4>
+                                            <p class="text-sm text-gray-500">Accessory</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-primary rounded-full transform hover:scale-105 transition-transform">Powerlifting</span>
+                                    </div>
+                                    <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Sets</p>
+                                            <p class="font-medium">3</p>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Reps</p>
+                                            <p class="font-medium">8-10</p>
+                                        </div>
+                                        <div class="bg-gray-50 p-2 rounded hover:bg-gray-100 transition-colors">
+                                            <p class="text-xs text-gray-500">Weight</p>
+                                            <p class="font-medium">80kg</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <button class="text-xs text-primary font-medium flex items-center hover:underline">
+                                            <i class="fas fa-play-circle mr-1"></i>
+                                            <span>Demo Video</span>
+                                        </button>
+                                        <div class="flex space-x-2">
+                                            <button class="btn-primary btn-click px-3 py-1 bg-primary text-white text-xs rounded-full">
+                                                Start
+                                            </button>
+                                            <button class="btn-secondary btn-click px-3 py-1 bg-white border border-gray-300 text-xs rounded-full">
+                                                Notes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-4 border-t border-gray-100 flex justify-between items-center">
+                                <button class="btn-secondary btn-click px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium">
+                                    <i class="fas fa-chevron-left mr-2"></i>
+                                    Previous Workout
+                                </button>
+                                <button class="btn-primary btn-click px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">
+                                    Complete Workout
+                                    <i class="fas fa-chevron-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="space-y-6">
+                    <!-- Progress Chart -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-dark">Big 3 Progress</h2>
+                            <div class="flex space-x-2">
+                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                    3M
+                                </button>
+                                <button class="btn-click px-2 py-1 text-xs bg-primary text-white rounded hover:bg-blue-600 transition-colors">
+                                    6M
+                                </button>
+                                <button class="btn-click px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200 transition-colors">
+                                    1Y
+                                </button>
+                            </div>
+                        </div>
+                        <div class="h-64">
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                        <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+                            <div class="p-2 rounded hover:bg-gray-50 transition-colors">
+                                <p class="text-xs text-gray-500">Squat</p>
+                                <p class="font-medium">180kg</p>
+                                <p class="text-xs text-green-600 flex items-center justify-center">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    +5kg
+                                </p>
+                            </div>
+                            <div class="p-2 rounded hover:bg-gray-50 transition-colors">
+                                <p class="text-xs text-gray-500">Bench</p>
+                                <p class="font-medium">120kg</p>
+                                <p class="text-xs text-green-600 flex items-center justify-center">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    +2.5kg
+                                </p>
+                            </div>
+                            <div class="p-2 rounded hover:bg-gray-50 transition-colors">
+                                <p class="text-xs text-gray-500">Deadlift</p>
+                                <p class="font-medium">210kg</p>
+                                <p class="text-xs text-green-600 flex items-center justify-center">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    +5kg
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Motivational Card -->
+                    <div class="motivational-card rounded-xl shadow text-white p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-bold">Today's Motivation</h3>
+                                <p class="mt-2 opacity-90">"Strength doesn't come from what you can do. It comes from overcoming the things you once thought you couldn't."</p>
+                            </div>
+                            <div class="p-2 rounded-full bg-white bg-opacity-20 transform hover:rotate-12 transition-transform">
+                                <i class="fas fa-quote-right"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white border-opacity-20 flex justify-between items-center">
+                            <div class="flex items-center group">
+                                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Coach" class="w-8 h-8 rounded-full border-2 border-white group-hover:border-opacity-70 transition-all">
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium">Coach Davis</p>
+                                    <p class="text-xs opacity-75">Powerlifting Specialist</p>
+                                </div>
+                            </div>
+                            <button class="btn-click text-xs bg-white bg-opacity-20 px-3 py-1 rounded-full hover:bg-opacity-30 transition-all">
+                                <i class="fas fa-share-alt mr-1"></i>
+                                Share
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Schedule -->
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-dark">Upcoming Schedule</h2>
+                            <button class="text-primary text-sm font-medium hover:underline">View All</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start group">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="h-2 w-2 rounded-full bg-primary group-hover:animate-pulse"></div>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium group-hover:text-primary transition-colors">Bench Press Focus</p>
+                                    <p class="text-xs text-gray-500">Tomorrow, 6:00 PM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-primary transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-start group">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="h-2 w-2 rounded-full bg-secondary group-hover:animate-pulse"></div>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium group-hover:text-secondary transition-colors">Recovery & Mobility</p>
+                                    <p class="text-xs text-gray-500">Thu, 7:00 AM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-secondary transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-start group">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="h-2 w-2 rounded-full bg-powerlifting group-hover:animate-pulse"></div>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium group-hover:text-powerlifting transition-colors">Deadlift Max Test</p>
+                                    <p class="text-xs text-gray-500">Sat, 10:00 AM</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-powerlifting transition-colors">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn-click mt-4 w-full py-2 bg-gray-100 text-primary rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                            View Full Calendar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200">
+            <div class="flex justify-around items-center p-3">
+                <a href="#" class="nav-item active flex flex-col items-center">
+                    <i class="nav-icon fas fa-home text-lg"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center">
+                    <i class="nav-icon fas fa-dumbbell text-lg"></i>
+                    <span class="text-xs mt-1">Workouts</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center">
+                    <i class="nav-icon fas fa-chart-line text-lg"></i>
+                    <span class="text-xs mt-1">Progress</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center">
+                    <i class="nav-icon fas fa-user text-lg"></i>
+                    <span class="text-xs mt-1">Profile</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Progress Chart
+        const progressChart = new Chart(
+            document.getElementById('progressChart'),
+            {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [
+                        {
+                            label: 'Squat',
+                            data: [160, 165, 170, 172, 175, 178, 180],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2,
+                            pointBackgroundColor: '#3b82f6',
+                            pointHoverRadius: 6,
+                            pointHoverBorderWidth: 2,
+                            pointHoverBorderColor: '#fff'
+                        },
+                        {
+                            label: 'Bench',
+                            data: [110, 112, 115, 115, 117, 118, 120],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2,
+                            pointBackgroundColor: '#10b981',
+                            pointHoverRadius: 6,
+                            pointHoverBorderWidth: 2,
+                            pointHoverBorderColor: '#fff'
+                        },
+                        {
+                            label: 'Deadlift',
+                            data: [180, 185, 190, 195, 200, 205, 210],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                            tension: 0.4,
+                            fill: true,
+                            borderWidth: 2,
+                            pointBackgroundColor: '#f59e0b',
+                            pointHoverRadius: 6,
+                            pointHoverBorderWidth: 2,
+                            pointHoverBorderColor: '#fff'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleFont: {
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                weight: 'normal'
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + 'kg';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                drawBorder: false,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'kg';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: 0,
+                            hoverRadius: 6
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
                 }
+            }
+        );
+
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Add click animation to all buttons with btn-click class
+            const buttons = document.querySelectorAll('.btn-click');
+            buttons.forEach(button => {
+                button.addEventListener('mousedown', function() {
+                    this.classList.add('active');
+                });
+                button.addEventListener('mouseup', function() {
+                    this.classList.remove('active');
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.classList.remove('active');
+                });
             });
         });
-    script
-body
-html
+    </script>
+</body>
+</html>
