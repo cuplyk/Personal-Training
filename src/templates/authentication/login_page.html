@@ -36,11 +36,14 @@
     </style>
 </head>
 
-<div>
-    <form method="POST">{% csrf_token %}
-
+{% block content %}
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
     </form>
-</div>
+{% endblock %}
 
 <!--
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
