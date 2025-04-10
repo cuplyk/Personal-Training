@@ -35,6 +35,14 @@
         }
     </style>
 </head>
+
+<div>
+    <form method="POST">{% csrf_token %}
+
+    </form>
+</div>
+
+<!--
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
         <div class="bg-white rounded-2xl p-8 card-shadow">
@@ -137,7 +145,7 @@
             </p>
         </div>
     </div>
-
+-->
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
