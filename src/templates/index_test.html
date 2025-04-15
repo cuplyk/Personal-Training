@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Training Plan Service | For Coaches & Athletes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        primaryDark: '#2563EB',
+                        secondary: '#10B981',
+                        secondaryDark: '#059669',
+                        dark: '#1F2937',
+                        darker: '#111827',
+                        light: '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 1s ease-in forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+            color: #1F2937;
+            overflow-x: hidden;
+        }
+        
+        .loading-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #3B82F6 0%, #10B981 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            transition: width 0.4s ease;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .rotate-element {
+            animation: spin-slow 8s linear infinite;
+        }
+        
+        .zoom-on-hover {
+            transition: transform 0.3s ease;
+        }
+        
+        .zoom-on-hover:hover {
+            transform: scale(1.05);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #3B82F6;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        
+        .mobile-menu.open {
+            max-height: 500px;
+        }
+        
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        .role-selector {
+            transition: all 0.3s ease;
+        }
+        
+        .role-selector:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .role-selector.active {
+            border-color: #3B82F6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .coach-highlight {
+            display: none;
+        }
+        
+        .athlete-highlight {
+            display: none;
+        }
+        
+        .show-coach .coach-highlight {
+            display: block;
+        }
+        
+        .show-athlete .athlete-highlight {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-content {
+                padding-top: 100px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Loading Bar -->
+    <div class="loading-bar" id="loadingBar"></div>
+    
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="floating-element mb-8">
+            <div class="relative w-32 h-32">
+                <!-- Coach icon -->
+                <div class="absolute inset-0 flex items-center justify-center text-primary">
+                    <i class="fas fa-chalkboard-teacher text-6xl rotate-element"></i>
+                </div>
+                <!-- Athlete icon -->
+                <div class="absolute inset-0 flex items-center justify-center text-secondary" style="transform: scale(0.8);">
+                    <i class="fas fa-running text-5xl floating-element" style="animation-delay: 1s;"></i>
+                </div>
+            </div>
+        </div>
+        <h1 class="font-heading text-4xl md:text-5xl font-bold text-dark mb-4">Personal Training Plan Service</h1>
+        <p class="text-lg md:text-xl text-gray-600 mb-8">Empowering coaches and athletes to achieve more</p>
+        <div class="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-primary to-secondary rounded-full" id="progressBar"></div>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white bg-opacity-95 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <a href="#" class="flex-shrink-0 flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                            <i class="fas fa-dumbbell text-white text-sm"></i>
+                        </div>
+                        <span class="font-heading ml-2 text-xl font-bold text-dark hidden md:block">TrainingPlan</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary">Home</a>
+                        <a href="#features" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary">Features</a>
+                        <a href="#coaches" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary">For Coaches</a>
+                        <a href="#athletes" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary">For Athletes</a>
+                        <a href="#testimonials" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary">Testimonials</a>
+                        <a href="#contact" class="nav-link px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary">Contact</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="hidden md:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primaryDark transition duration-300">
+                        Sign In
+                    </a>
+                    <div class="md:hidden">
+                        <button id="mobileMenuButton" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobileMenu" class="mobile-menu bg-white md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary">Home</a>
+                <a href="#features" class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary">Features</a>
+                <a href="#coaches" class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary">For Coaches</a>
+                <a href="#athletes" class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary">For Athletes</a>
+                <a href="#testimonials" class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary">Testimonials</a>
+                <a href="#contact" class="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-primary">Contact</a>
+                <div class="pt-2">
+                    <a href="#" class="block w-full px-3 py-2 text-base font-medium rounded-md text-center text-white bg-primary hover:bg-primaryDark transition duration-300">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient min-h-screen flex items-center justify-center pt-16">
+        <div class="container mx-auto px-6 hero-content">
+            <div class="text-center max-w-4xl mx-auto fade-in-section">
+                <h1 class="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-dark mb-6">
+                    <span class="text-primary">Coach.</span> <span class="text-secondary">Train.</span> <span class="text-dark">Achieve.</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-8">
+                    The ultimate platform for coaches to create personalized training plans and for athletes to follow them with precision.
+                </p>
+                
+                <!-- Role Selection -->
+                <div class="flex flex-col sm:flex-row justify-center gap-6 mb-12">
+                    <div class="role-selector active bg-white p-6 rounded-xl shadow-md border-2 border-primary cursor-pointer transition-all duration-300" data-role="coach">
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-4">
+                                <i class="fas fa-chalkboard-teacher text-3xl text-primary"></i>
+                            </div>
+                            <h3 class="font-heading text-lg font-semibold text-dark mb-2">I'm a Coach</h3>
+                            <p class="text-gray-600 text-sm">Create and manage training plans for your athletes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="role-selector bg-white p-6 rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all duration-300" data-role="athlete">
+                        <div class="flex flex-col items-center">
+                            <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mb-4">
+                                <i class="fas fa-running text-3xl text-secondary"></i>
+                            </div>
+                            <h3 class="font-heading text-lg font-semibold text-dark mb-2">I'm an Athlete</h3>
+                            <p class="text-gray-600 text-sm">Follow personalized plans and track progress</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dynamic CTA based on role selection -->
+                <div class="coach-highlight">
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button class="bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            Create Your First Plan
+                        </button>
+                        <button class="border-2 border-primary text-primary font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="athlete-highlight">
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button class="bg-secondary hover:bg-secondaryDark text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            Find Your Coach
+                        </button>
+                        <button class="border-2 border-secondary text-secondary font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            Explore Plans
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 left-0 right-0 flex justify-center animate-bounce">
+            <a href="#features" class="text-gray-400 hover:text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Powerful Features</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Designed to meet the needs of both coaches and athletes with precision and flexibility
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-light p-8 rounded-xl shadow-sm card-hover fade-in-section">
+                    <div class="w-14 h-14 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fas fa-clipboard-list text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-semibold text-dark mb-3">Custom Training Plans</h3>
+                    <p class="text-gray-600 mb-4">
+                        Coaches can create fully customized training plans tailored to each athlete's goals, level, and schedule.
+                    </p>
+                    <div class="coach-highlight">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            Learn more <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="athlete-highlight">
+                        <a href="#" class="text-secondary font-medium inline-flex items-center">
+                            See examples <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-light p-8 rounded-xl shadow-sm card-hover fade-in-section" style="transition-delay: 0.1s">
+                    <div class="w-14 h-14 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-2xl text-secondary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-semibold text-dark mb-3">Progress Tracking</h3>
+                    <p class="text-gray-600 mb-4">
+                        Athletes can log workouts and track progress, while coaches monitor performance with detailed analytics.
+                    </p>
+                    <div class="coach-highlight">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            View analytics <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="athlete-highlight">
+                        <a href="#" class="text-secondary font-medium inline-flex items-center">
+                            Track your progress <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-light p-8 rounded-xl shadow-sm card-hover fade-in-section" style="transition-delay: 0.2s">
+                    <div class="w-14 h-14 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fas fa-comments text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-semibold text-dark mb-3">Direct Communication</h3>
+                    <p class="text-gray-600 mb-4">
+                        Built-in messaging system allows seamless communication between coaches and athletes.
+                    </p>
+                    <div class="coach-highlight">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            Message athletes <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="athlete-highlight">
+                        <a href="#" class="text-secondary font-medium inline-flex items-center">
+                            Contact your coach <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-light p-8 rounded-xl shadow-sm card-hover fade-in-section" style="transition-delay: 0.3s">
+                    <div class="w-14 h-14 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-2xl text-secondary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-semibold text-dark mb-3">Mobile Friendly</h3>
+                    <p class="text-gray-600 mb-4">
+                        Access your training plans anywhere with our fully responsive mobile interface.
+                    </p>
+                    <div class="coach-highlight">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            Mobile features <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="athlete-highlight">
+                        <a href="#" class="text-secondary font-medium inline-flex items-center">
+                            Get the app <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="bg-light p-8 rounded-xl shadow-sm card-hover fade-in-section" style="transition-delay: 0.4s">
+                    <div class="w-14 h-14 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fas fa-video text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-semibold text-dark mb-3">Exercise Library</h3>
+                    <p class="text-gray-600 mb-4">
+                        Comprehensive library with video demonstrations and instructions for hundreds of exercises.
+                    </p>
+                    <div class="coach-highlight">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            Add to plans <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="athlete-highlight">
+                        <a href="#" class="text-secondary font-medium inline-flex items-center">
+                            Browse exercises <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="bg-light p-8 rounded-xl shadow-sm card-hover fade-in-section" style="transition-delay: 0.5s">
+                    <div class="w-14 h-14 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-alt text-2xl text-secondary"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-semibold text-dark mb-3">Scheduling Tools</h3>
+                    <p class="text-gray-600 mb-4">
+                        Intelligent scheduling that adapts to athlete availability and automatically adjusts plans.
+                    </p>
+                    <div class="coach-highlight">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            Manage schedules <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="athlete-highlight">
+                        <a href="#" class="text-secondary font-medium inline-flex items-center">
+                            Sync calendar <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- For Coaches Section -->
+    <section id="coaches" class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0 lg:pr-12 fade-in-section">
+                    <h2 class="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">For Coaches</h2>
+                    <div class="w-20 h-1 bg-primary mb-6"></div>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Streamline your coaching business with powerful tools designed to save you time and deliver better results for your athletes.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-check text-primary text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base text-gray-700">Create personalized training plans in minutes with our drag-and-drop editor</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-check text-primary text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base text-gray-700">Monitor athlete progress with detailed analytics and performance metrics</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-check text-primary text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base text-gray-700">Manage multiple athletes with our intuitive dashboard and scheduling tools</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#" class="bg-primary hover:bg-primaryDark text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 inline-flex items-center">
+                            Start Coaching <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 relative fade-in-section" style="transition-delay: 0.2s">
+                    <div class="relative rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1541534741688-6078c6efb9d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Coach working with athlete" class="w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-xl transform rotate-3">
+                        <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                            <i class="fas fa-users text-2xl text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- For Athletes Section -->
+    <section id="athletes" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-12 lg:mb-0 lg:order-last lg:pl-12 fade-in-section">
+                    <h2 class="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">For Athletes</h2>
+                    <div class="w-20 h-1 bg-secondary mb-6"></div>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Achieve your fitness goals with personalized training plans tailored to your needs and progress.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-check text-secondary text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base text-gray-700">Follow customized workouts designed specifically for you</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-check text-secondary text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base text-gray-700">Track your progress with visual charts and performance metrics</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center">
+                                    <i class="fas fa-check text-secondary text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-base text-gray-700">Stay connected with your coach through direct messaging</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <a href="#" class="bg-secondary hover:bg-secondaryDark text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 inline-flex items-center">
+                            Start Training <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 relative fade-in-section" style="transition-delay: 0.2s">
+                    <div class="relative rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Athlete training" class="w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl transform -rotate-3">
+                        <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center">
+                            <i class="fas fa-trophy text-2xl text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="py-16 bg-gradient-to-r from-primary to-secondary">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center text-white">
+                <div class="p-6 fade-in-section">
+                    <div class="text-4xl font-bold mb-2" id="coachesCount">0</div>
+                    <div class="text-xl font-medium">Certified Coaches</div>
+                </div>
+                <div class="p-6 fade-in-section" style="transition-delay: 0.1s">
+                    <div class="text-4xl font-bold mb-2" id="athletesCount">0</div>
+                    <div class="text-xl font-medium">Active Athletes</div>
+                </div>
+                <div class="p-6 fade-in-section" style="transition-delay: 0.2s">
+                    <div class="text-4xl font-bold mb-2" id="plansCreated">0</div>
+                    <div class="text-xl font-medium">Training Plans</div>
+                </div>
+                <div class="p-6 fade-in-section" style="transition-delay: 0.3s">
+                    <div class="text-4xl font-bold mb-2" id="workoutsLogged">0</div>
+                    <div class="text-xl font-medium">Workouts Logged</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Success Stories</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary to-secondary mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Hear from coaches and athletes who have transformed their training
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm card-hover fade-in-section">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary">
+                            <img src="https://randomuser.me/api/portraits/women/43.jpg" alt="Sarah Johnson" class="w-full h-full object-cover">
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-heading text-lg font-semibold text-dark">Sarah Johnson</h4>
+                            <p class="text-primary">Personal Coach</p>
+                        </div>
+                    </div>
+                    <p class="italic text-gray-600 mb-6">
+                        "This platform has completely transformed how I manage my coaching business. I can now create personalized plans for all my athletes in half the time, and the progress tracking features help me deliver better results."
+                    </p>
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 极好的！我已经创建了一个完整的HTML文件，包含了一个响应式、互动式的"Personal Training Plan Service"加载页面，专门为教练和运动员设计。这个设计包括：
+
+1. **沉浸式加载动画**：带有旋转的教练和运动员图标
+2. **角色选择交互**：用户可以点击选择自己是教练还是运动员
+3. **动态内容展示**：根据用户选择显示不同的内容和CTA按钮
+4. **平滑滚动动画**：页面元素随着滚动逐渐淡入
+5. **响应式导航栏**：适配桌面和移动设备
+6. **特色功能展示**：为教练和运动员分别突出不同的功能
+7. **统计数字动画**：滚动到视图时数字增长动画
+8. **用户评价部分**：展示教练和运动员的成功故事
+9. **专业配色方案**：使用蓝色和绿色区分教练和运动员功能
+
+所有元素都采用了现代、专业的设计风格，包括：
+- 清晰的视觉层次
+- 一致的配色方案
+- 响应式布局
+- 可访问的交互元素
+- 平滑的过渡动画
+
+页面完全响应，在移动设备上也能良好显示。JavaScript处理了加载动画、角色
+</html>

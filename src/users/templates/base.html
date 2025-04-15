@@ -4,7 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Django Project{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .input-focus:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        .role-selector input:checked + label {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        .password-strength {
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
+
 <body>
     <header>
         <nav>
@@ -15,5 +50,188 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+</body>
+
+<script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+
+    // Password strength indicator
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthBars = [
+            document.getElementById('strength-1'),
+            document.getElementById('strength-2'),
+            document.getElementById('strength-3'),
+            document.getElementById('strength-4')
+        ];
+        const strengthText = document.getElementById('password-strength-text');
+        
+        // Reset all bars
+        strengthBars.forEach(bar => {
+            bar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500');
+            bar.classList.add('bg-gray-200');
+        });
+        
+        if (password.length === 0) {
+            strengthText.textContent = 'Password strength';
+            strengthText.classList.remove('text-red-500', 'text-yellow-500', 'text-green-500');
+            strengthText.classList.add('text-gray-500');
+            return;
+        }
+        
+        // Very simple strength calculation (for demo purposes)
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^A-Za-z0-9]/)) strength++;
+        
+        // Update bars
+        for (let i = 0; i < strength; i++) {
+            if (i < 2) {
+                strengthBars[i].classList.remove('bg-gray-200');
+                strengthBars[i].classList.add('bg-red-500');
+            } else if (i === 2) {
+                strengthBars[i].classList.remove('bg-gray-200');
+                strengthBars[i].classList.add('bg-yellow-500');
+            } else {
+                strengthBars[i].classList.remove('bg-gray-200');
+                strengthBars[i].classList.add('bg-green-500');
+            }
+        }
+        
+        // Update text
+        if (strength <= 1) {
+            strengthText.textContent = 'Weak';
+            strengthText.classList.remove('text-gray-500', 'text-yellow-500', 'text-green-500');
+            strengthText.classList.add('text-red-500');
+        } else if (strength <= 2) {
+            strengthText.textContent = 'Fair';
+            strengthText.classList.remove('text-gray-500', 'text-red-500', 'text-green-500');
+            strengthText.classList.add('text-yellow-500');
+        } else {
+            strengthText.textContent = 'Strong';
+            strengthText.classList.remove('text-gray-500', 'text-red-500', 'text-yellow-500');
+            strengthText.classList.add('text-green-500');
+        }
+    });
+
+    // Check password match
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = this.value;
+        const matchIndicator = document.getElementById('password-match');
+        
+        if (confirmPassword.length === 0) {
+            matchIndicator.classList.add('hidden');
+            return;
+        }
+        
+        if (password === confirmPassword) {
+            matchIndicator.textContent = '✓ Passwords match';
+            matchIndicator.classList.remove('hidden', 'text-red-500');
+            matchIndicator.classList.add('text-green-500');
+        } else {
+            matchIndicator.textContent = '✗ Passwords don\'t match';
+            matchIndicator.classList.remove('hidden', 'text-green-500');
+            matchIndicator.classList.add('text-red-500');
+        }
+    });
+
+    // Check username availability (simulated)
+    document.getElementById('username').addEventListener('input', function() {
+        const username = this.value;
+        const availabilityIndicator = document.getElementById('username-availability');
+        
+        if (username.length < 3) {
+            availabilityIndicator.classList.add('hidden');
+            return;
+        }
+        
+        // Simulate API call with timeout
+        setTimeout(() => {
+            // This is just a demo - in a real app you'd check with your backend
+            const takenUsernames = ['admin', 'coach', 'athlete', 'test', 'demo'];
+            if (takenUsernames.includes(username.toLowerCase())) {
+                availabilityIndicator.textContent = '✗ Taken';
+                availabilityIndicator.classList.remove('hidden', 'text-green-500');
+                availabilityIndicator.classList.add('text-red-500');
+            } else {
+                availabilityIndicator.textContent = '✓ Available';
+                availabilityIndicator.classList.remove('hidden', 'text-red-500');
+                availabilityIndicator.classList.add('text-green-500');
+            }
+        }, 500);
+    });
+
+    // Toggle between coach and athlete fields
+    document.querySelectorAll('input[name="role"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'coach') {
+                document.getElementById('coachFields').classList.remove('hidden');
+                document.getElementById('athleteFields').classList.add('hidden');
+            } else {
+                document.getElementById('coachFields').classList.add('hidden');
+                document.getElementById('athleteFields').classList.remove('hidden');
+            }
+        });
+    });
+
+    // Form submission
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const registerBtn = document.getElementById('registerBtn');
+        const registerText = document.getElementById('registerText');
+        const registerSpinner = document.getElementById('registerSpinner');
+        
+        // Show loading state
+        registerBtn.disabled = true;
+        registerText.textContent = 'Creating account...';
+        registerSpinner.classList.remove('hidden');
+        registerBtn.classList.add('animate-pulse');
+        
+        // Simulate API call
+        setTimeout(() => {
+            // Reset button state
+            registerBtn.disabled = false;
+            registerText.textContent = 'Create Account';
+            registerSpinner.classList.add('hidden');
+            registerBtn.classList.remove('animate-pulse');
+            
+            // Get form values
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+            
+            // Simple validation
+            if (firstName && lastName && email && username) {
+                alert(`Account created successfully!\nWelcome ${firstName} ${lastName} (${username}) as a ${role}.`);
+                // In a real app, this would redirect to the dashboard
+            } else {
+                alert('Please fill in all required fields');
+            }
+        }, 2000);
+    });
+    
+    document.getElementById('loginBtn').addEventListener('click', function() {
+        alert('Redirecting to login page...');
+        // In a real app, this would navigate to the login page
+    });
+</script>
 </body>
 </html>
