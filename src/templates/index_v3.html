@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Training Plan Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            font-size: 1.5rem;
+        }
+        
+        .user-type-card {
+            transition: all 0.3s ease;
+            perspective: 1000px;
+        }
+        
+        .user-type-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .user-type-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .user-type-card:hover .user-type-card-inner {
+            transform: rotateY(10deg);
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: #3b82f6;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .mobile-menu.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-light text-dark">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="loading-spinner mb-4"></div>
+        <h2 class="text-xl font-semibold text-primary animate-pulse">Loading Personal Training Plan Service</h2>
+        <p class="text-gray-500 mt-2">Connecting you to fitness excellence...</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <i class="fas fa-dumbbell text-primary text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-primary">PTPS</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link text-dark hover:text-primary font-medium">Home</a>
+                    <a href="#features" class="nav-link text-dark hover:text-primary font-medium">Features</a>
+                    <a href="#how-it-works" class="nav-link text-dark hover:text-primary font-medium">How It Works</a>
+                    <a href="#user-types" class="nav-link text-dark hover:text-primary font-medium">For You</a>
+                    <a href="#contact" class="nav-link text-dark hover:text-primary font-medium">Contact</a>
+                </div>
+                
+                <div class="hidden md:block">
+                    <a href="#register" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-300">Get Started</a>
+                </div>
+                
+                <button id="mobile-menu-button" class="md:hidden text-dark focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <div id="mobile-menu" class="mobile-menu md:hidden">
+                <div class="px-2 pt-2 pb-4 space-y-2">
+                    <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-dark hover:bg-gray-100">Home</a>
+                    <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium text-dark hover:bg-gray-100">Features</a>
+                    <a href="#how-it-works" class="block px-3 py-2 rounded-md text-base font-medium text-dark hover:bg-gray-100">How It Works</a>
+                    <a href="#user-types" class="block px-3 py-2 rounded-md text-base font-medium text-dark hover:bg-gray-100">For You</a>
+                    <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-dark hover:bg-gray-100">Contact</a>
+                    <a href="#register" class="block px-3 py-2 rounded-md text-base font-medium bg-primary text-white">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-gradient text-white py-20 md:py-32">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0 animate-fade-in">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Your Personal <span class="text-yellow-300">Training Plan</span> Service</h1>
+                    <p class="text-xl mb-8 opacity-90">Connect with professional coaches or get personalized training plans tailored to your fitness goals.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="#register" class="bg-white text-primary hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold text-center transition duration-300">Start Free Trial</a>
+                        <a href="#how-it-works" class="border-2 border-white hover:bg-white hover:text-primary px-6 py-3 rounded-lg font-semibold text-center transition duration-300">Learn More</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center animate-slide-up">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Fitness Training" class="rounded-xl shadow-2xl max-w-full h-auto">
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-0 right-0 flex justify-center scroll-indicator">
+            <a href="#features" class="text-white animate-bounce">
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Designed to help both athletes and coaches achieve their fitness goals efficiently</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-center">Progress Tracking</h3>
+                    <p class="text-gray-600 text-center">Monitor your fitness journey with detailed analytics and progress reports.</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-center">Custom Plans</h3>
+                    <p class="text-gray-600 text-center">Get personalized workout and nutrition plans tailored to your specific needs.</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-center">Coach Communication</h3>
+                    <p class="text-gray-600 text-center">Direct messaging with your coach for guidance and support anytime.</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-center">Video Tutorials</h3>
+                    <p class="text-gray-600 text-center">Access a library of exercise demonstrations and instructional videos.</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-center">Mobile Friendly</h3>
+                    <p class="text-gray-600 text-center">Access your training plans anytime, anywhere with our mobile-optimized platform.</p>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl card-hover">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-center">Community Support</h3>
+                    <p class="text-gray-600 text-center">Connect with like-minded individuals in our fitness community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Simple steps to get started with your personalized training journey</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center justify-between mb-12">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Sign Up" class="rounded-xl shadow-lg max-w-full h-auto">
+                </div>
+                <div class="md:w-1/2 md:pl-12">
+                    <div class="flex items-start mb-6">
+                        <div class="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Create Your Account</h3>
+                            <p class="text-gray-600">Sign up as either an athlete or a coach. Provide basic information about your fitness goals or coaching expertise.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start mb-6">
+                        <div class="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Complete Your Profile</h3>
+                            <p class="text-gray-600">Athletes fill out a detailed questionnaire about their fitness level, goals, and preferences. Coaches provide information about their specialties and experience.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-primary text-white rounded-full w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="text-xl font-semibold mb-2">Get Started</h3>
+                            <p class="text-gray-600">Athletes receive a personalized plan or get matched with a coach. Coaches can start managing their clients and creating customized plans.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
+                <h3 class="text-2xl font-semibold mb-4 text-center">Why Choose Our Service?</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-primary text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-medium mb-1">Expertise</h4>
+                            <p class="text-gray-600">All coaches are certified professionals with proven track records.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-primary text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-medium mb-1">Flexibility</h4>
+                            <p class="text-gray-600">Plans adapt to your schedule, preferences, and progress.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-primary text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-medium mb-1">Technology</h4>
+                            <p class="text-gray-600">Advanced tools to track and optimize your performance.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-primary text-xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-medium mb-1">Support</h4>
+                            <p class="text-gray-600">24/7 customer support and coach availability.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Types Section -->
+    <section id="user-types" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Designed For You</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Whether you're an athlete or a coach, we have the perfect solution</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="user-type-card">
+                    <div class="user-type-card-inner bg-gray-50 p-8 rounded-xl h-full">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4">
+                                <i class="fas fa-running text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold">For Athletes</h3>
+                        </div>
+                        <p class="text-gray-600 mb-6">Get personalized training plans tailored to your specific goals, whether you're looking to build muscle, lose weight, improve endurance, or train for a competition.</p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-2 mt-1"></i>
+                                <span>Customized workout plans</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-2 mt-1"></i>
+                                <span>Personalized nutrition guidance</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-2 mt-1"></i>
+                                <span>Progress tracking and analytics</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-primary mr-2 mt-1"></i>
+                                <span>Direct access to expert coaches</span>
+                            </li>
+                        </ul>
+                        <a href="#register" class="inline-block bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300">Start as Athlete</a>
+                    </div>
+                </div>
+                
+                <div class="user-type-card">
+                    <div class="user-type-card-inner bg-gray-50 p-8 rounded-xl h-full">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-secondary bg-opacity-10 text-secondary p-3 rounded-full mr-4">
+                                <i class="fas fa-user-tie text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-semibold">For Coaches</h3>
+                        </div>
+                        <p class="text-gray-600 mb-6">Expand your coaching business with our platform. Manage clients, create customized plans, track progress, and grow your reputation in the fitness community.</p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-secondary mr-2 mt-1"></i>
+                                <span>Client management tools</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-secondary mr-2 mt-1"></i>
+                                <span>Plan creation and scheduling</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-secondary mr-2 mt-1"></i>
+                                <span>Progress monitoring</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-secondary mr-2 mt-1"></i>
+                                <span>Marketing and exposure</span>
+                            </li>
+                        </ul>
+                        <a href="#register" class="inline-block bg-secondary hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300">Start as Coach</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Success Stories</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">What our users say about their experience</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="User" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Sarah Johnson</h4>
+                            <p class="text-gray-500 text-sm">Athlete • 6 months</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"I've lost 15kg and gained so much confidence with my personalized plan. My coach has been incredibly supportive throughout my journey."</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="User" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Michael Chen</h4>
+                            <p class="text-gray-500 text-sm">Coach • 1 year</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"This platform has helped me grow my client base by 300%. The tools make it so easy to create and manage training plans efficiently."</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-sm card-hover">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Emma Rodriguez</h4>
+                            <p class="text-gray-500 text-sm">Athlete • 3 months</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"Training for my first marathon was daunting, but my coach broke it down into manageable steps. I'm now more confident than ever!"</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Register Section -->
+    <section id="register" class="py-20 bg-primary text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-8 md:p-12">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Transform Your Fitness Journey?</h2>
+                        <p class="text-lg opacity-90 mb-6">Join thousands of athletes and coaches who are achieving their goals with our platform.</p>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>7-day free trial</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>Cancel anytime</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-secondary mr-3 mt-1"></i>
+                                <span>No credit card required</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 bg-white rounded-lg p-6 text-dark">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Create Your Account</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-2" for="name">Full Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-2" for="email">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-2" for="password">Password</label>
+                                <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-gray-700 mb-2">I am a:</label>
+                                <div class="flex space-x-4">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="user_type" value="athlete" checked class="text-primary focus:ring-primary">
+                                        <span class="ml-2">Athlete</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="user_type" value="coach" class="text-primary focus:ring-primary">
+                                        <span class="ml-2">Coach</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition duration-300">Start Free Trial</button>
+                        </form>
+                        <p class="text-sm text-gray-600 mt-4 text-center">By signing up, you agree to our <a href="#" class="text-primary hover:underline">Terms</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find answers to common questions about our service</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="border-b border-gray-200 py-4">
+                    <button class="faq-question flex justify-between items-center w-full text-left focus:outline-none">
+                        <span class="font-medium text-lg">How does the matching between athletes and coaches work?</span>
+                        <i class="fas fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer mt-2 text-gray-600 hidden">
+                        <p>Our algorithm matches athletes with coaches based on several factors including fitness goals, training preferences, location (if in-person training is desired), coaching style, and availability. You can browse coach profiles and request a specific coach if you prefer.</p>
+                    </div>
+                </div>
+                
+                <div class="border-b border-gray-200 py-4">
+                    <button class="faq-question flex justify-between items-center w-full text-left focus:outline-none">
+                        <span class="font-medium text-lg">What's included in the free trial?</span>
+                        <i class="fas fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer mt-2 text-gray-600 hidden">
+                        <p>The free trial gives you full access to all platform features for 7 days. Athletes can receive a personalized training plan and communicate with their coach. Coaches can create and manage training plans for up to 3 clients during the trial period.</p>
+                    </div>
+                </div>
+                
+                <div class="border-b border-gray-200 py-4">
+                    <button class="faq-question flex justify-between items-center w-full text-left focus:outline-none">
+                        <span class="font-medium text-lg">Can I switch coaches if it's not a good fit?</span>
+                        <i class="fas fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer mt-2 text-gray-600 hidden">
+                        <p>Absolutely! We want you to have the best possible experience. You can request a coach change at any time through your account settings, and we'll help you find a better match from our network of qualified professionals.</p>
+                    </div>
+                </div>
+                
+                <div class="border-b border-gray-200 py-4">
+                    <button class="faq-question flex justify-between items-center w-full text-left focus:outline-none">
+                        <span class="font-medium text-lg">How often are training plans updated?</span>
+                        <i class="fas fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer mt-2 text-gray-600 hidden">
+                        <p>Training plans are typically updated every 4-6 weeks, but this can vary based on your progress and goals. Your coach will monitor your performance and adjust your plan as needed to ensure continuous progress.</p>
+                    </div>
+                </div>
+                
+                <div class="border-b border-gray-200 py-4">
+                    <button class="faq-question flex justify-between items-center w-full text-left focus:outline-none">
+                        <span class="font-medium text-lg">What certifications do your coaches have?</span>
+                        <i class="fas fa-chevron-down text-primary transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer mt-2 text-gray-600 hidden">
+                        <p>All coaches on our platform are required to hold current certifications from recognized organizations such as NASM, ACE, ACSM, or equivalent. Many also have additional specialty certifications in areas like nutrition, corrective exercise, or sports-specific training.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">Get In Touch</h2>
+                        <p class="text-lg text-gray-600 mb-8">Have questions or need support? Our team is here to help you with anything related to our training platform.</p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Email Us</h4>
+                                    <a href="mailto:support@ptps.com" class="text-gray-600 hover:text-primary">support@ptps.com</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Call Us</h4>
+                                    <a href="tel:+18005551234" class="text-gray-600 hover:text-primary">+1 (800) 555-1234</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-full mr-4 flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Visit Us</h4>
+                                    <p class="text-gray-600">123 Fitness Ave, Suite 100<br>San Francisco, CA 94107</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <h4 class="font-semibold mb-4">Follow Us</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white w-10 h-10 rounded-full flex items-center justify-center transition duration-300">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white w-10 h-10 rounded-full flex items-center justify-center transition duration-300">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white w-10 h-10 rounded-full flex items-center justify-center transition duration-300">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-gray-200 hover:bg-primary hover:text-white w-10 h-10 rounded-full flex items-center justify-center transition duration-300">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2 bg-white rounded-xl shadow-sm p-8">
+                        <h3 class="text-2xl font-semibold mb-6">Send Us a Message</h3>
+                        <form>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2" for="contact-name">Name</label>
+                                    <input type="text" id="contact-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2" for="contact-email">Email</label>
+                                    <input type="email" id="contact-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 mb-2" for="contact-subject">Subject</label>
+                                <input type="text" id="contact-subject" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="mb-6">
+                                <label class="block text-gray-700 mb-2" for="contact-message">Message</label>
+                                <textarea id="contact-message" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition duration-300">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <a href="#" class="flex items-center mb-6">
+                        <i class="fas fa-dumbbell text-primary text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-white">PTPS</span>
+                    </a>
+                    <p class="text-gray-400">Empowering athletes and coaches to achieve their fitness goals through personalized training plans and expert guidance.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-primary transition duration-300">Home</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-primary transition duration-300">Features</a></li>
+                        <li><a href="#how-it-works" class="text-gray-400 hover:text-primary transition duration-300">How It Works</a></li>
+                        <li><a href="#user-types" class="text-gray-400 hover:text-primary transition duration-300">For You</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition duration-300">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition duration-300">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition duration-300">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition duration-300">Cookie Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition duration-300">GDPR</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Newsletter</h4>
+                    <p class="text-gray-400 mb-4">Subscribe to get fitness tips, special offers, and platform updates.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg focus:outline-none text-dark w-full">
+                        <button type="submit" class="bg-primary hover:bg-blue-700 px-4 py-2 rounded-r-lg">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">© 2023 Personal Training Plan Service. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-primary transition duration-300">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Loading screen
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('loading-screen').classList.add('opacity-0');
+                setTimeout(function() {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                }, 500);
+            }, 1500);
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('open');
+            this.innerHTML = menu.classList.contains('open') ? 
+                '<i class="fas fa-times text-2xl"></i>' : 
+                '<i class="fas fa-bars text-2xl"></i>';
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const answer = button.nextElementSibling;
+                const icon = button.querySelector('i');
+                
+                // Toggle answer visibility
+                answer.classList.toggle('hidden');
+                
+                // Rotate icon
+                if (answer.classList.contains('hidden')) {
+                    icon.classList.remove('rotate-180');
+                } else {
+                    icon.classList.add('rotate-180');
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu.classList.contains('open')) {
+                        mobileMenu.classList.remove('open');
+                        document.getElementById('mobile-menu-button').innerHTML = '<i class="fas fa-bars text-2xl"></i>';
+                    }
+                    
+                    // Scroll to target
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Animation on scroll
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.animate-fade-in, .animate-slide-up');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Initial check
+        animateOnScroll();
+        
+        // Check on scroll
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>
