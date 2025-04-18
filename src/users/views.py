@@ -1,34 +1,26 @@
+# users/views.py
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from .forms import RegistrationForm
+from django.views import View
 
-"""def register(request):
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+class LoginView(View):
+    def get(self, request):
+        form = AuthenticationForm()
+        return render(request, 'users/login.html', {'form': form})
+
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)  # Automatically log in the user after registration
-            return redirect('home')  # Redirect to the home page
-    else:
-        form = RegistrationForm()
-    return render(request, 'register.html', {'form': form})"""
+            user = form.get_user()
+            login(request, user)
+            if user.is_coach:
+                return redirect('coach_dashboard')
+            else:
+                return redirect('athlete_dashboard')
+        return render(request, 'users/login.html', {'form': form})
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import UserSerializer, LoginSerializer
-
-class RegisterView(APIView):
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class LoginView(APIView):
-    def post(self, request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid():
-            return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')
