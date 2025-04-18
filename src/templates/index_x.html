@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Training Plan Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .gradient-flow {
+            background-size: 200% 200%;
+            animation: gradientFlow 12s ease infinite;
+        }
+        
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .user-card {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .scroll-indicator::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            margin-left: -12px;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            transform: rotate(-45deg);
+            animation: scrollDown 1.5s infinite;
+            opacity: 0;
+        }
+        
+        @keyframes scrollDown {
+            0% {
+                transform: rotate(-45deg) translate(0, 0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(-45deg) translate(-10px, 10px);
+                opacity: 0;
+            }
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: white;
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(-45deg, #1a2980, #26d0ce, #1a2980);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+        }
+        
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2);
+            color: #1a2980;
+        }
+        
+        .stats-counter {
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen text-white">
+        <div class="loading-logo animate-pulse">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="40" stroke="white" stroke-width="8" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2">
+                    <animate attributeName="stroke-dashoffset" from="251.2" to="0" dur="1.5s" fill="freeze" />
+                </circle>
+                <path d="M30,50 L45,65 L70,35" stroke="white" stroke-width="8" fill="none" stroke-dasharray="60" stroke-dashoffset="60">
+                    <animate attributeName="stroke-dashoffset" from="60" to="0" dur="1s" begin="0.5s" fill="freeze" />
+                </path>
+            </svg>
+        </div>
+        <h1 class="text-3xl font-bold mb-2 animate-fade-in">Personal Training Plan Service</h1>
+        <p class="text-lg opacity-80 mb-8 animate-fade-in delay-100">Preparing your fitness dashboard...</p>
+        <div class="loading-bar">
+            <div id="loadingProgress" class="loading-progress"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="opacity-0">
+        <!-- Hero Section -->
+        <section class="hero-gradient min-h-screen flex flex-col justify-center items-center text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20">
+                <div class="absolute top-0 left-0 w-full h-full bg-repeat" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2IiBoZWlnaHQ9IjYiPgo8cmVjdCB3aWR0aD0iNiIgaGVpZ2h0PSI2IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMNiA2IiBzdHJva2U9InJnYmEoMCwwLDAsMC4xKSIgc3Ryb2tlLXdpZHRoPSIxIj48L3BhdGg+CjxwYXRoIGQ9Ik02IDBMMCA2IiBzdHJva2U9InJnYmEoMCwwLDAsMC4xKSIgc3Ryb2tlLXdpZHRoPSIxIj48L3BhdGg+Cjwvc3ZnPg==');"></div>
+            </div>
+            
+            <div class="container mx-auto px-6 py-20 z-10 text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+                    Elevate Your <span class="text-white font-extrabold">Training</span>
+                </h1>
+                <p class="text-xl md:text-2xl opacity-90 mb-12 max-w-3xl mx-auto animate-fade-in delay-100">
+                    The smart platform connecting coaches with athletes for personalized training success
+                </p>
+                
+                <div class="flex flex-col md:flex-row justify-center gap-8 mb-20">
+                    <div class="user-card bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-8 shadow-xl animate-fade-in delay-200 hover:bg-opacity-20 cursor-pointer transform transition-all duration-300" onclick="selectUserType('coach')">
+                        <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
+                            <i class="fas fa-chalkboard-teacher text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">For Coaches</h3>
+                        <p class="opacity-80 mb-4">Build, manage, and optimize training programs at scale</p>
+                        <div class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 px-6 rounded-full transition duration-300">
+                            Coach Dashboard
+                        </div>
+                    </div>
+                    
+                    <div class="user-card bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl p-8 shadow-xl animate-fade-in delay-300 hover:bg-opacity-20 cursor-pointer transform transition-all duration-300" onclick="selectUserType('athlete')">
+                        <div class="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-float" style="animation-delay: 0.5s;">
+                            <i class="fas fa-running text-4xl text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">For Athletes</h3>
+                        <p class="opacity-80 mb-4">Follow personalized plans and track your progress</p>
+                        <div class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 px-6 rounded-full transition duration-300">
+                            Athlete Portal
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="scroll-indicator animate-fade-in delay-500">
+                    <span class="text-sm opacity-70">Scroll to explore</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Designed for Performance</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Comprehensive tools tailored to your specific training needs
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="feature-card bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center mb-6 text-blue-600">
+                            <i class="fas fa-chart-line text-2xl feature-icon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Performance Analytics</h3>
+                        <p class="text-gray-600">
+                            Real-time metrics and visualizations to track athlete progress and program effectiveness
+                        </p>
+                    </div>
+                    
+                    <!-- Feature 2 -->
+                    <div class="feature-card bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-purple-50 rounded-lg flex items-center justify-center mb-6 text-purple-600">
+                            <i class="fas fa-calendar-alt text-2xl feature-icon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Smart Scheduling</h3>
+                        <p class="text-gray-600">
+                            Adaptive training calendars that adjust based on performance and recovery data
+                        </p>
+                    </div>
+                    
+                    <!-- Feature 3 -->
+                    <div class="feature-card bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-green-50 rounded-lg flex items-center justify-center mb-6 text-green-600">
+                            <i class="fas fa-comments text-2xl feature-icon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Integrated Communication</h3>
+                        <p class="text-gray-600">
+                            Secure messaging with video analysis tools for effective coach-athlete collaboration
+                        </p>
+                    </div>
+                    
+                    <!-- Feature 4 -->
+                    <div class="feature-card bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-yellow-50 rounded-lg flex items-center justify-center mb-6 text-yellow-600">
+                            <i class="fas fa-mobile-alt text-2xl feature-icon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Mobile Optimized</h3>
+                        <p class="text-gray-600">
+                            Full functionality on any device with offline access to training plans
+                        </p>
+                    </div>
+                    
+                    <!-- Feature 5 -->
+                    <div class="feature-card bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-red-50 rounded-lg flex items-center justify-center mb-6 text-red-600">
+                            <i class="fas fa-video text-2xl feature-icon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Exercise Library</h3>
+                        <p class="text-gray-600">
+                            1000+ exercises with HD video demonstrations and detailed instructions
+                        </p>
+                    </div>
+                    
+                    <!-- Feature 6 -->
+                    <div class="feature-card bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-indigo-50 rounded-lg flex items-center justify-center mb-6 text-indigo-600">
+                            <i class="fas fa-bell text-2xl feature-icon"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Smart Notifications</h3>
+                        <p class="text-gray-600">
+                            Personalized reminders and alerts based on your training schedule
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div class="p-6 rounded-xl bg-white shadow-sm">
+                        <div class="text-4xl font-bold mb-2 text-blue-600 stats-counter" data-target="10000">0</div>
+                        <div class="text-gray-600">Active Users</div>
+                    </div>
+                    <div class="p-6 rounded-xl bg-white shadow-sm">
+                        <div class="text-4xl font-bold mb-2 text-purple-600 stats-counter" data-target="500">0</div>
+                        <div class="text-gray-600">Certified Coaches</div>
+                    </div>
+                    <div class="p-6 rounded-xl bg-white shadow-sm">
+                        <div class="text-4xl font-bold mb-2 text-green-600 stats-counter" data-target="95">0</div>
+                        <div class="text-gray-600">Satisfaction Rate</div>
+                    </div>
+                    <div class="p-6 rounded-xl bg-white shadow-sm">
+                        <div class="text-4xl font-bold mb-2 text-yellow-600 stats-counter" data-target="24">0</div>
+                        <div class="text-gray-600">Support Response (hrs)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Trusted by Professionals</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        What elite coaches and athletes say about our platform
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4">
+                                <i class="fas fa-user-tie text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Coach Mark Daniels</h4>
+                                <p class="text-gray-500 text-sm">Olympic Strength Coach</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">
+                            "The analytics dashboard has transformed how I monitor my athletes' progress. I can now make data-driven adjustments to training programs in real-time."
+                        </p>
+                        <div class="mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-4">
+                                <i class="fas fa-running text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Jessica Morales</h4>
+                                <p class="text-gray-500 text-sm">Professional Triathlete</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">
+                            "Having my training plan sync automatically to my watch and the ability to log workouts on the go has been a complete game-changer for my preparation."
+                        </p>
+                        <div class="mt-4 text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 hero-gradient text-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Training?</h2>
+                <p class="text-xl opacity-90 mb-10 max-w-2xl mx-auto">
+                    Join the platform trusted by elite coaches and athletes worldwide
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="selectUserType('coach')" class="bg-white hover:bg-gray-100 text-blue-600 font-bold py-3 px-8 rounded-full transition duration-300 shadow-lg">
+                        Coach Sign Up
+                    </button>
+                    <button onclick="selectUserType('athlete')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300 shadow-lg">
+                        Athlete Sign Up
+                    </button>
+                </div>
+                <p class="mt-6 text-sm opacity-80">
+                    Start with a 14-day free trial. No credit card required.
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-gray-300 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-white text-lg font-bold mb-4">Training Plan Service</h3>
+                        <p class="mb-4">
+                            The complete platform for professional coaches and dedicated athletes
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="#" aria-label="Facebook" class="text-gray-400 hover:text-white transition duration-300">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" aria-label="Twitter" class="text-gray-400 hover:text-white transition duration-300">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" aria-label="Instagram" class="text-gray-400 hover:text-white transition duration-300">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" aria-label="LinkedIn" class="text-gray-400 hover:text-white transition duration-300">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-white text-lg font-bold mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white transition duration-300">Help Center</a></li>
+                            <li><a href="#" class="hover:text-white transition duration-300">Training Guides</a></li>
+                            <li><a href="#" class="hover:text-white transition duration-300">Webinars</a></li>
+                            <li><a href="#" class="hover:text-white transition duration-300">API Documentation</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-white text-lg font-bold mb-4">Company</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white transition duration-300">About Us</a></li>
+                            <li><a href="#" class="hover:text-white transition duration-300">Careers</a></li>
+                            <li><a href="#" class="hover:text-white transition duration-300">Blog</a></li>
+                            <li><a href="#" class="hover:text-white transition duration-300">Contact</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-white text-lg font-bold mb-4">Get in Touch</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-center">
+                                <i class="fas fa-envelope mr-2 text-sm"></i>
+                                <span>support@trainingplanservice.com</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-phone-alt mr-2 text-sm"></i>
+                                <span>+1 (555) 123-4567</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2 text-sm"></i>
+                                <span>123 Fitness Ave, Sportstown</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="mb-4 md:mb-0">© 2023 Personal Training Plan Service. All rights reserved.</p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="hover:text-white transition duration-300">Privacy</a>
+                        <a href="#" class="hover:text-white transition duration-300">Terms</a>
+                        <a href="#" class="hover:text-white transition duration-300">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Simulate loading progress
+        document.addEventListener('DOMContentLoaded', function() {
+            let progress = 0;
+            const loadingProgress = document.getElementById('loadingProgress');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContent = document.getElementById('mainContent');
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 100) progress = 100;
+                loadingProgress.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            mainContent.style.opacity = '1';
+                            
+                            // Initialize animations
+                            animateOnScroll();
+                            animateCounters();
+                        }, 500);
+                    }, 300);
+                }
+            }, 200);
+        });
+        
+        function selectUserType(type) {
+            // In a real app, this would redirect to the appropriate signup page
+            alert(`Redirecting to ${type} signup page...`);
+        }
+        
+        function animateOnScroll() {
+            const observerOptions = {
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all elements that should animate on scroll
+            document.querySelectorAll('.feature-card, .user-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+        
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stats-counter');
+            const speed = 200;
+            
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / speed;
+                
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(animateCounters, 1);
+                } else {
+                    counter.innerText = target;
+                }
+            });
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
