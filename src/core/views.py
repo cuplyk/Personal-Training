@@ -41,10 +41,10 @@ class RemoveAthleteView(LoginRequiredMixin, UserPassesTestMixin, View):
 class CoachDashboardView(View):
     def get(self, request):
         athletes = request.user.athletes.all()
-        return render(request, 'training_service/coach_dashboard.html', {'athletes': athletes})
+        return render(request, 'dashboard_v2.html', {'athletes': athletes})
 
 @method_decorator(athlete_required, name='dispatch')
 class AthleteDashboardView(View):
     def get(self, request):
         coaches = request.user.coaches.all()
-        return render(request, 'training_service/athlete_dashboard.html', {'coaches': coaches})
+        return render(request, 'athlete_dashboard.html', {'coaches': coaches})

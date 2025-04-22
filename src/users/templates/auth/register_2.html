@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Personal Training Plan Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .role-card {
+            transition: all 0.3s ease;
+        }
+        .role-card:hover {
+            transform: translateY(-5px);
+        }
+        .role-card.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .password-toggle {
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        @media (max-width: 640px) {
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Create your account
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Or
+        <a href="{% url 'login' %}" class="font-medium text-blue-600 hover:text-blue-500">
+          sign in to your existing account
+        </a>
+      </p>
+    </div>
+  
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <form class="space-y-6" method="POST" action="{% url 'register' %}">
+          {% csrf_token %}
+          
+          <!-- Username -->
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-user text-gray-400"></i>
+              </div>
+              <input id="username" name="username" type="text" required
+                class="py-2 pl-10 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder="johndoe">
+            </div>
+            {% if form.username.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.username.errors.as_text }}</p>
+            {% endif %}
+          </div>
+  
+          <!-- Email -->
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">
+              Email address
+            </label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-envelope text-gray-400"></i>
+              </div>
+              <input id="email" name="email" type="email" autocomplete="email" required
+                class="py-2 pl-10 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder="john@example.com">
+            </div>
+            {% if form.email.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.email.errors.as_text }}</p>
+            {% endif %}
+          </div>
+  
+          <!-- Password -->
+          <div>
+            <label for="password1" class="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-400"></i>
+              </div>
+              <input id="password1" name="password1" type="password" autocomplete="new-password" required
+                class="py-2 pl-10 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder="••••••••">
+            </div>
+            {% if form.password1.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.password1.errors.as_text }}</p>
+            {% endif %}
+          </div>
+  
+          <!-- Confirm Password -->
+          <div>
+            <label for="password2" class="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-lock text-gray-400"></i>
+              </div>
+              <input id="password2" name="password2" type="password" autocomplete="new-password" required
+                class="py-2 pl-10 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                placeholder="••••••••">
+            </div>
+            {% if form.password2.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.password2.errors.as_text }}</p>
+            {% endif %}
+          </div>
+  
+          <!-- Role Selection -->
+          <div class="flex items-center">
+            <input id="is_coach" name="is_coach" type="checkbox"
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <label for="is_coach" class="ml-2 block text-sm text-gray-900">
+              I am a coach
+            </label>
+          </div>
+  
+          <!-- Submit Button -->
+          <div>
+            <button type="submit"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Register
+            </button>
+          </div>
+        </form>
+  
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
+            </div>
+          </div>
+  
+          <div class="mt-6 grid grid-cols-2 gap-3">
+            <div>
+              <a href="#"
+                class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <i class="fab fa-google text-blue-500"></i>
+              </a>
+            </div>
+            <div>
+              <a href="#"
+                class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <i class="fab fa-facebook text-blue-500"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

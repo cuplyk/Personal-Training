@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,6 +38,11 @@
             height: 4px;
             transition: all 0.3s ease;
         }
+        .errorlist {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
     </style>
 </head>
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
@@ -52,71 +58,87 @@
                 <p class="text-gray-600 mt-2">Join our Personal Training Plan Service</p>
             </div>
 
-            <form id="registerForm" class="space-y-5">
+            <form id="registerForm" method="post" action="{% url 'register' %}" class="space-y-5">
+                {% csrf_token %}
+                
+                <!-- Display form-wide errors -->
+                {% if user_form.non_field_errors %}
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                        {% for error in user_form.non_field_errors %}
+                            <p class="text-red-700">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <label for="{{ user_form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
-                            <input type="text" id="firstName" name="firstName" required 
-                                   class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                                   placeholder="John">
+                            {{ user_form.first_name }}
+                            {% if user_form.first_name.errors %}
+                                <div class="errorlist">{{ user_form.first_name.errors }}</div>
+                            {% endif %}
                         </div>
                     </div>
                     <div>
-                        <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <label for="{{ user_form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-user text-gray-400"></i>
                             </div>
-                            <input type="text" id="lastName" name="lastName" required 
-                                   class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                                   placeholder="Doe">
+                            {{ user_form.last_name }}
+                            {% if user_form.last_name.errors %}
+                                <div class="errorlist">{{ user_form.last_name.errors }}</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <label for="{{ user_form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-envelope text-gray-400"></i>
                         </div>
-                        <input type="email" id="email" name="email" required 
-                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                               placeholder="your@email.com">
+                        {{ user_form.email }}
+                        {% if user_form.email.errors %}
+                            <div class="errorlist">{{ user_form.email.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <label for="{{ user_form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-at text-gray-400"></i>
                         </div>
-                        <input type="text" id="username" name="username" required 
-                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                               placeholder="username">
+                        {{ user_form.username }}
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                             <span id="username-availability" class="text-xs hidden"></span>
                         </div>
+                        {% if user_form.username.errors %}
+                            <div class="errorlist">{{ user_form.username.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <label for="{{ user_form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-gray-400"></i>
                         </div>
-                        <input type="password" id="password" name="password" required 
-                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                               placeholder="••••••••">
+                        {{ user_form.password1 }}
                         <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
                             <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
                         </button>
+                        {% if user_form.password1.errors %}
+                            <div class="errorlist">{{ user_form.password1.errors }}</div>
+                        {% endif %}
                     </div>
                     <div class="mt-2 grid grid-cols-4 gap-1">
                         <div id="strength-1" class="password-strength bg-gray-200 rounded"></div>
@@ -128,17 +150,18 @@
                 </div>
 
                 <div>
-                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                    <label for="{{ user_form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-lock text-gray-400"></i>
                         </div>
-                        <input type="password" id="confirmPassword" name="confirmPassword" required 
-                               class="pl-10 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                               placeholder="••••••••">
+                        {{ user_form.password2 }}
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                             <span id="password-match" class="text-xs hidden"></span>
                         </div>
+                        {% if user_form.password2.errors %}
+                            <div class="errorlist">{{ user_form.password2.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -146,7 +169,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">I am a</label>
                     <div class="grid grid-cols-2 gap-4 role-selector">
                         <div>
-                            <input type="radio" id="coach" name="role" value="coach" class="hidden peer">
+                            <input type="radio" id="coach" name="is_coach" value="True" class="hidden peer" {% if user_form.is_coach.value %}checked{% endif %}>
                             <label for="coach" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                                 <i class="fas fa-chalkboard-teacher text-2xl mb-2 text-indigo-600"></i>
                                 <span class="font-medium">Coach</span>
@@ -154,7 +177,7 @@
                             </label>
                         </div>
                         <div>
-                            <input type="radio" id="athlete" name="role" value="athlete" class="hidden peer" checked>
+                            <input type="radio" id="athlete" name="is_coach" value="False" class="hidden peer" {% if not user_form.is_coach.value %}checked{% endif %}>
                             <label for="athlete" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
                                 <i class="fas fa-running text-2xl mb-2 text-indigo-600"></i>
                                 <span class="font-medium">Athlete</span>
@@ -166,55 +189,44 @@
 
                 <div id="coachFields" class="hidden space-y-4">
                     <div>
-                        <label for="specialization" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                        <select id="specialization" name="specialization" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border">
-                            <option value="">Select your specialization</option>
-                            <option value="strength">Strength Training</option>
-                            <option value="endurance">Endurance Training</option>
-                            <option value="weightloss">Weight Loss</option>
-                            <option value="rehabilitation">Rehabilitation</option>
-                            <option value="sports">Sports Specific</option>
-                        </select>
+                        <label for="{{ coach_form.specialization.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
+                        {{ coach_form.specialization }}
+                        {% if coach_form.specialization.errors %}
+                            <div class="errorlist">{{ coach_form.specialization.errors }}</div>
+                        {% endif %}
                     </div>
                     <div>
-                        <label for="certification" class="block text-sm font-medium text-gray-700 mb-1">Certification</label>
-                        <input type="text" id="certification" name="certification" 
-                               class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border"
-                               placeholder="E.g., NASM, ACE, etc.">
+                        <label for="{{ coach_form.certification.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Certification</label>
+                        {{ coach_form.certification }}
+                        {% if coach_form.certification.errors %}
+                            <div class="errorlist">{{ coach_form.certification.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div id="athleteFields" class="space-y-4">
                     <div>
-                        <label for="fitnessLevel" class="block text-sm font-medium text-gray-700 mb-1">Fitness Level</label>
-                        <select id="fitnessLevel" name="fitnessLevel" class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 input-focus py-2.5 border">
-                            <option value="">Select your fitness level</option>
-                            <option value="beginner">Beginner</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
-                            <option value="elite">Elite Athlete</option>
-                        </select>
+                        <label for="{{ athlete_form.fitness_level.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Fitness Level</label>
+                        {{ athlete_form.fitness_level }}
+                        {% if athlete_form.fitness_level.errors %}
+                            <div class="errorlist">{{ athlete_form.fitness_level.errors }}</div>
+                        {% endif %}
                     </div>
                     <div>
-                        <label for="goals" class="block text-sm font-medium text-gray-700 mb-1">Primary Goals</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Primary Goals</label>
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="flex items-center">
-                                <input type="checkbox" id="goal-strength" name="goals" value="strength" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                <label for="goal-strength" class="ml-2 block text-sm text-gray-700">Strength</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="goal-endurance" name="goals" value="endurance" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                <label for="goal-endurance" class="ml-2 block text-sm text-gray-700">Endurance</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="goal-weightloss" name="goals" value="weightloss" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                <label for="goal-weightloss" class="ml-2 block text-sm text-gray-700">Weight Loss</label>
-                            </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="goal-muscle" name="goals" value="muscle" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                                <label for="goal-muscle" class="ml-2 block text-sm text-gray-700">Muscle Gain</label>
-                            </div>
+                            {% for checkbox in athlete_form.goals %}
+                                <div class="flex items-center">
+                                    {{ checkbox.tag }}
+                                    <label for="{{ checkbox.id_for_label }}" class="ml-2 block text-sm text-gray-700">
+                                        {{ checkbox.choice_label }}
+                                    </label>
+                                </div>
+                            {% endfor %}
                         </div>
+                        {% if athlete_form.goals.errors %}
+                            <div class="errorlist">{{ athlete_form.goals.errors }}</div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -246,16 +258,16 @@
                 </div>
 
                 <div class="mt-6">
-                    <button id="loginBtn" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                    <a href="{% url 'login' %}" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                         Sign in to your account
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
 
         <div class="mt-6 text-center">
             <p class="text-xs text-white opacity-80">
-                © 2023 Training Plan Pro. All rights reserved.
+                © {% now "Y" %} Training Plan Pro. All rights reserved.
             </p>
         </div>
     </div>
@@ -263,7 +275,7 @@
     <script>
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
+            const passwordInput = document.getElementById('{{ user_form.password1.id_for_label }}');
             const icon = this.querySelector('i');
             
             if (passwordInput.type === 'password') {
@@ -276,7 +288,7 @@
         });
 
         // Password strength indicator
-        document.getElementById('password').addEventListener('input', function() {
+        document.getElementById('{{ user_form.password1.id_for_label }}').addEventListener('input', function() {
             const password = this.value;
             const strengthBars = [
                 document.getElementById('strength-1'),
@@ -337,8 +349,8 @@
         });
 
         // Check password match
-        document.getElementById('confirmPassword').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
+        document.getElementById('{{ user_form.password2.id_for_label }}').addEventListener('input', function() {
+            const password = document.getElementById('{{ user_form.password1.id_for_label }}').value;
             const confirmPassword = this.value;
             const matchIndicator = document.getElementById('password-match');
             
@@ -358,8 +370,8 @@
             }
         });
 
-        // Check username availability (simulated)
-        document.getElementById('username').addEventListener('input', function() {
+        // Check username availability (AJAX)
+        document.getElementById('{{ user_form.username.id_for_label }}').addEventListener('input', function() {
             const username = this.value;
             const availabilityIndicator = document.getElementById('username-availability');
             
@@ -368,26 +380,30 @@
                 return;
             }
             
-            // Simulate API call with timeout
-            setTimeout(() => {
-                // This is just a demo - in a real app you'd check with your backend
-                const takenUsernames = ['admin', 'coach', 'athlete', 'test', 'demo'];
-                if (takenUsernames.includes(username.toLowerCase())) {
-                    availabilityIndicator.textContent = '✗ Taken';
-                    availabilityIndicator.classList.remove('hidden', 'text-green-500');
-                    availabilityIndicator.classList.add('text-red-500');
-                } else {
-                    availabilityIndicator.textContent = '✓ Available';
-                    availabilityIndicator.classList.remove('hidden', 'text-red-500');
-                    availabilityIndicator.classList.add('text-green-500');
-                }
-            }, 500);
+            // AJAX call to check username availability
+            fetch(`/api/check-username/?username=${encodeURIComponent(username)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        availabilityIndicator.textContent = '✓ Available';
+                        availabilityIndicator.classList.remove('hidden', 'text-red-500');
+                        availabilityIndicator.classList.add('text-green-500');
+                    } else {
+                        availabilityIndicator.textContent = '✗ Taken';
+                        availabilityIndicator.classList.remove('hidden', 'text-green-500');
+                        availabilityIndicator.classList.add('text-red-500');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking username:', error);
+                    availabilityIndicator.classList.add('hidden');
+                });
         });
 
         // Toggle between coach and athlete fields
-        document.querySelectorAll('input[name="role"]').forEach(radio => {
+        document.querySelectorAll('input[name="is_coach"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                if (this.value === 'coach') {
+                if (this.value === 'True') {
                     document.getElementById('coachFields').classList.remove('hidden');
                     document.getElementById('athleteFields').classList.add('hidden');
                 } else {
@@ -397,48 +413,16 @@
             });
         });
 
-        // Form submission
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const registerBtn = document.getElementById('registerBtn');
-            const registerText = document.getElementById('registerText');
-            const registerSpinner = document.getElementById('registerSpinner');
-            
-            // Show loading state
-            registerBtn.disabled = true;
-            registerText.textContent = 'Creating account...';
-            registerSpinner.classList.remove('hidden');
-            registerBtn.classList.add('animate-pulse');
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Reset button state
-                registerBtn.disabled = false;
-                registerText.textContent = 'Create Account';
-                registerSpinner.classList.add('hidden');
-                registerBtn.classList.remove('animate-pulse');
-                
-                // Get form values
-                const firstName = document.getElementById('firstName').value;
-                const lastName = document.getElementById('lastName').value;
-                const email = document.getElementById('email').value;
-                const username = document.getElementById('username').value;
-                const role = document.querySelector('input[name="role"]:checked').value;
-                
-                // Simple validation
-                if (firstName && lastName && email && username) {
-                    alert(`Account created successfully!\nWelcome ${firstName} ${lastName} (${username}) as a ${role}.`);
-                    // In a real app, this would redirect to the dashboard
-                } else {
-                    alert('Please fill in all required fields');
-                }
-            }, 2000);
-        });
-        
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            alert('Redirecting to login page...');
-            // In a real app, this would navigate to the login page
+        // Initialize fields based on current selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelected = document.querySelector('input[name="is_coach"]:checked').value;
+            if (roleSelected === 'True') {
+                document.getElementById('coachFields').classList.remove('hidden');
+                document.getElementById('athleteFields').classList.add('hidden');
+            } else {
+                document.getElementById('coachFields').classList.add('hidden');
+                document.getElementById('athleteFields').classList.remove('hidden');
+            }
         });
     </script>
 </body>
