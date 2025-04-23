@@ -45,385 +45,210 @@
         }
     </style>
 </head>
-<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <div class="bg-white rounded-2xl p-8 card-shadow">
-            <div class="text-center mb-8">
-                <div class="flex justify-center mb-4">
-                    <div class="bg-indigo-100 p-3 rounded-full">
-                        <i class="fas fa-dumbbell text-indigo-600 text-3xl"></i>
-                    </div>
+    <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Create your account
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            Or
+            <a href="{% url 'login' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+            sign in to your existing account
+            </a>
+        </p>
+        </div>
+    
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <form class="space-y-6" method="POST">
+            {% csrf_token %}
+            
+            <!-- Username -->
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">
+                Username
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-user text-gray-400"></i>
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800">Create Your Account</h1>
-                <p class="text-gray-600 mt-2">Join our Personal Training Plan Service</p>
-            </div>
-
-            <form id="registerForm" method="post" action="{% url 'register' %}" class="space-y-5">
-                {% csrf_token %}
-                
-                <!-- Display form-wide errors -->
-                {% if user_form.non_field_errors %}
-                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-                        {% for error in user_form.non_field_errors %}
-                            <p class="text-red-700">{{ error }}</p>
-                        {% endfor %}
-                    </div>
+                <input id="username" name="username" type="text" required
+                    class="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="john_doe">
+                </div>
+                {% if user_form.username.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ user_form.username.errors.0 }}</p>
                 {% endif %}
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="{{ user_form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-user text-gray-400"></i>
-                            </div>
-                            {{ user_form.first_name }}
-                            {% if user_form.first_name.errors %}
-                                <div class="errorlist">{{ user_form.first_name.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div>
-                        <label for="{{ user_form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-user text-gray-400"></i>
-                            </div>
-                            {{ user_form.last_name }}
-                            {% if user_form.last_name.errors %}
-                                <div class="errorlist">{{ user_form.last_name.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
+            </div>
+    
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">
+                Email address
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-envelope text-gray-400"></i>
                 </div>
-
-                <div>
-                    <label for="{{ user_form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
-                        </div>
-                        {{ user_form.email }}
-                        {% if user_form.email.errors %}
-                            <div class="errorlist">{{ user_form.email.errors }}</div>
-                        {% endif %}
-                    </div>
+                <input id="email" name="email" type="email" autocomplete="email" required
+                    class="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="you@example.com">
                 </div>
-
-                <div>
-                    <label for="{{ user_form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-at text-gray-400"></i>
-                        </div>
-                        {{ user_form.username }}
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <span id="username-availability" class="text-xs hidden"></span>
-                        </div>
-                        {% if user_form.username.errors %}
-                            <div class="errorlist">{{ user_form.username.errors }}</div>
-                        {% endif %}
-                    </div>
+                {% if user_form.email.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ user_form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+    
+            <!-- Password -->
+            <div>
+                <label for="password1" class="block text-sm font-medium text-gray-700">
+                Password
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-lock text-gray-400"></i>
                 </div>
-
-                <div>
-                    <label for="{{ user_form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
-                        </div>
-                        {{ user_form.password1 }}
-                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
-                        </button>
-                        {% if user_form.password1.errors %}
-                            <div class="errorlist">{{ user_form.password1.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="mt-2 grid grid-cols-4 gap-1">
-                        <div id="strength-1" class="password-strength bg-gray-200 rounded"></div>
-                        <div id="strength-2" class="password-strength bg-gray-200 rounded"></div>
-                        <div id="strength-3" class="password-strength bg-gray-200 rounded"></div>
-                        <div id="strength-4" class="password-strength bg-gray-200 rounded"></div>
-                    </div>
-                    <p id="password-strength-text" class="text-xs mt-1 text-gray-500">Password strength</p>
+                <input id="password1" name="password1" type="password" autocomplete="new-password" required
+                    class="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="••••••••">
                 </div>
-
-                <div>
-                    <label for="{{ user_form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
-                        </div>
-                        {{ user_form.password2 }}
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <span id="password-match" class="text-xs hidden"></span>
-                        </div>
-                        {% if user_form.password2.errors %}
-                            <div class="errorlist">{{ user_form.password2.errors }}</div>
-                        {% endif %}
-                    </div>
+                {% if user_form.password1.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ user_form.password1.errors.0 }}</p>
+                {% endif %}
+            </div>
+    
+            <!-- Confirm Password -->
+            <div>
+                <label for="password2" class="block text-sm font-medium text-gray-700">
+                Confirm Password
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-lock text-gray-400"></i>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">I am a</label>
-                    <div class="grid grid-cols-2 gap-4 role-selector">
-                        <div>
-                            <input type="radio" id="coach" name="is_coach" value="True" class="hidden peer" {% if user_form.is_coach.value %}checked{% endif %}>
-                            <label for="coach" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-chalkboard-teacher text-2xl mb-2 text-indigo-600"></i>
-                                <span class="font-medium">Coach</span>
-                                <span class="text-xs text-gray-500 mt-1">Create training plans</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="athlete" name="is_coach" value="False" class="hidden peer" {% if not user_form.is_coach.value %}checked{% endif %}>
-                            <label for="athlete" class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                <i class="fas fa-running text-2xl mb-2 text-indigo-600"></i>
-                                <span class="font-medium">Athlete</span>
-                                <span class="text-xs text-gray-500 mt-1">Follow training plans</span>
-                            </label>
-                        </div>
-                    </div>
+                <input id="password2" name="password2" type="password" autocomplete="new-password" required
+                    class="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="••••••••">
                 </div>
-
-                <div id="coachFields" class="hidden space-y-4">
-                    <div>
-                        <label for="{{ coach_form.specialization.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Specialization</label>
-                        {{ coach_form.specialization }}
-                        {% if coach_form.specialization.errors %}
-                            <div class="errorlist">{{ coach_form.specialization.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <label for="{{ coach_form.certification.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Certification</label>
-                        {{ coach_form.certification }}
-                        {% if coach_form.certification.errors %}
-                            <div class="errorlist">{{ coach_form.certification.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div id="athleteFields" class="space-y-4">
-                    <div>
-                        <label for="{{ athlete_form.fitness_level.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Fitness Level</label>
-                        {{ athlete_form.fitness_level }}
-                        {% if athlete_form.fitness_level.errors %}
-                            <div class="errorlist">{{ athlete_form.fitness_level.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Primary Goals</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            {% for checkbox in athlete_form.goals %}
-                                <div class="flex items-center">
-                                    {{ checkbox.tag }}
-                                    <label for="{{ checkbox.id_for_label }}" class="ml-2 block text-sm text-gray-700">
-                                        {{ checkbox.choice_label }}
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        {% if athlete_form.goals.errors %}
-                            <div class="errorlist">{{ athlete_form.goals.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="flex items-center">
-                    <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                    <label for="terms" class="ml-2 block text-sm text-gray-700">
-                        I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
-                    </label>
-                </div>
-
-                <div>
-                    <button type="submit" id="registerBtn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                        <span id="registerText">Create Account</span>
-                        <span id="registerSpinner" class="hidden ml-2">
-                            <i class="fas fa-spinner fa-spin"></i>
-                        </span>
-                    </button>
-                </div>
+                {% if user_form.password2.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ user_form.password2.errors.0 }}</p>
+                {% endif %}
+            </div>
+    
+            <!-- Role Selection -->
+            <div class="flex items-center">
+                <input id="is_coach" name="is_coach" type="checkbox"
+                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label for="is_coach" class="ml-2 block text-sm text-gray-700">
+                I am a coach
+                </label>
+            </div>
+    
+            <div>
+                <button type="submit"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Register
+                </button>
+            </div>
             </form>
-
+    
             <div class="mt-6">
-                <div class="relative">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">Already have an account?</span>
-                    </div>
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
                 </div>
-
-                <div class="mt-6">
-                    <a href="{% url 'login' %}" class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                        Sign in to your account
-                    </a>
+                <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">
+                    Or continue with
+                </span>
                 </div>
+            </div>
+    
+            <div class="mt-6 grid grid-cols-2 gap-3">
+                <div>
+                <a href="#"
+                    class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-google text-red-500"></i>
+                </a>
+                </div>
+    
+                <div>
+                <a href="#"
+                    class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-facebook text-blue-500"></i>
+                </a>
+                </div>
+            </div>
             </div>
         </div>
-
-        <div class="mt-6 text-center">
-            <p class="text-xs text-white opacity-80">
-                © {% now "Y" %} Training Plan Pro. All rights reserved.
-            </p>
         </div>
     </div>
+    <input id="username" name="username" type="text" required
+    value="{{ user_form.username.value|default_if_none:'' }}"
+    class="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+    placeholder="john_doe">
 
-    <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('{{ user_form.password1.id_for_label }}');
-            const icon = this.querySelector('i');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        });
+  <input id="email" name="email" type="email" autocomplete="email" required
+    value="{{ user_form.email.value|default_if_none:'' }}"
+    class="py-2 pl-10 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+    placeholder="you@example.com">
 
-        // Password strength indicator
-        document.getElementById('{{ user_form.password1.id_for_label }}').addEventListener('input', function() {
-            const password = this.value;
-            const strengthBars = [
-                document.getElementById('strength-1'),
-                document.getElementById('strength-2'),
-                document.getElementById('strength-3'),
-                document.getElementById('strength-4')
-            ];
-            const strengthText = document.getElementById('password-strength-text');
-            
-            // Reset all bars
-            strengthBars.forEach(bar => {
-                bar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500');
-                bar.classList.add('bg-gray-200');
-            });
-            
-            if (password.length === 0) {
-                strengthText.textContent = 'Password strength';
-                strengthText.classList.remove('text-red-500', 'text-yellow-500', 'text-green-500');
-                strengthText.classList.add('text-gray-500');
-                return;
-            }
-            
-            // Very simple strength calculation (for demo purposes)
-            let strength = 0;
-            if (password.length >= 8) strength++;
-            if (password.match(/[A-Z]/)) strength++;
-            if (password.match(/[0-9]/)) strength++;
-            if (password.match(/[^A-Za-z0-9]/)) strength++;
-            
-            // Update bars
-            for (let i = 0; i < strength; i++) {
-                if (i < 2) {
-                    strengthBars[i].classList.remove('bg-gray-200');
-                    strengthBars[i].classList.add('bg-red-500');
-                } else if (i === 2) {
-                    strengthBars[i].classList.remove('bg-gray-200');
-                    strengthBars[i].classList.add('bg-yellow-500');
-                } else {
-                    strengthBars[i].classList.remove('bg-gray-200');
-                    strengthBars[i].classList.add('bg-green-500');
-                }
-            }
-            
-            // Update text
-            if (strength <= 1) {
-                strengthText.textContent = 'Weak';
-                strengthText.classList.remove('text-gray-500', 'text-yellow-500', 'text-green-500');
-                strengthText.classList.add('text-red-500');
-            } else if (strength <= 2) {
-                strengthText.textContent = 'Fair';
-                strengthText.classList.remove('text-gray-500', 'text-red-500', 'text-green-500');
-                strengthText.classList.add('text-yellow-500');
-            } else {
-                strengthText.textContent = 'Strong';
-                strengthText.classList.remove('text-gray-500', 'text-red-500', 'text-yellow-500');
-                strengthText.classList.add('text-green-500');
-            }
-        });
-
-        // Check password match
-        document.getElementById('{{ user_form.password2.id_for_label }}').addEventListener('input', function() {
-            const password = document.getElementById('{{ user_form.password1.id_for_label }}').value;
-            const confirmPassword = this.value;
-            const matchIndicator = document.getElementById('password-match');
-            
-            if (confirmPassword.length === 0) {
-                matchIndicator.classList.add('hidden');
-                return;
-            }
-            
-            if (password === confirmPassword) {
-                matchIndicator.textContent = '✓ Passwords match';
-                matchIndicator.classList.remove('hidden', 'text-red-500');
-                matchIndicator.classList.add('text-green-500');
-            } else {
-                matchIndicator.textContent = '✗ Passwords don\'t match';
-                matchIndicator.classList.remove('hidden', 'text-green-500');
-                matchIndicator.classList.add('text-red-500');
-            }
-        });
-
-        // Check username availability (AJAX)
-        document.getElementById('{{ user_form.username.id_for_label }}').addEventListener('input', function() {
-            const username = this.value;
-            const availabilityIndicator = document.getElementById('username-availability');
-            
-            if (username.length < 3) {
-                availabilityIndicator.classList.add('hidden');
-                return;
-            }
-            
-            // AJAX call to check username availability
-            fetch(`/api/check-username/?username=${encodeURIComponent(username)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.available) {
-                        availabilityIndicator.textContent = '✓ Available';
-                        availabilityIndicator.classList.remove('hidden', 'text-red-500');
-                        availabilityIndicator.classList.add('text-green-500');
-                    } else {
-                        availabilityIndicator.textContent = '✗ Taken';
-                        availabilityIndicator.classList.remove('hidden', 'text-green-500');
-                        availabilityIndicator.classList.add('text-red-500');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error checking username:', error);
-                    availabilityIndicator.classList.add('hidden');
-                });
-        });
-
-        // Toggle between coach and athlete fields
-        document.querySelectorAll('input[name="is_coach"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                if (this.value === 'True') {
-                    document.getElementById('coachFields').classList.remove('hidden');
-                    document.getElementById('athleteFields').classList.add('hidden');
-                } else {
-                    document.getElementById('coachFields').classList.add('hidden');
-                    document.getElementById('athleteFields').classList.remove('hidden');
-                }
-            });
-        });
-
-        // Initialize fields based on current selection
-        document.addEventListener('DOMContentLoaded', function() {
-            const roleSelected = document.querySelector('input[name="is_coach"]:checked').value;
-            if (roleSelected === 'True') {
-                document.getElementById('coachFields').classList.remove('hidden');
-                document.getElementById('athleteFields').classList.add('hidden');
-            } else {
-                document.getElementById('coachFields').classList.add('hidden');
-                document.getElementById('athleteFields').classList.remove('hidden');
-            }
-        });
-    </script>
+  <!-- For the checkbox -->
+  <input id="is_coach" name="is_coach" type="checkbox"
+    {% if user_form.is_coach.value %}checked{% endif %}
+    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+</div>
 </body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js">
+    // static/js/form_persistence.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to save form data to sessionStorage
+    function saveFormData(form) {
+        const formData = {};
+        Array.from(form.elements).forEach(element => {
+            if (element.name && (element.type !== 'submit' && element.type !== 'button')) {
+                if (element.type === 'checkbox') {
+                    formData[element.name] = element.checked;
+                } else {
+                    formData[element.name] = element.value;
+                }
+            }
+        });
+        sessionStorage.setItem('formData', JSON.stringify(formData));
+    }
+
+    // Function to load form data from sessionStorage
+    function loadFormData(form) {
+        const savedData = sessionStorage.getItem('formData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            Array.from(form.elements).forEach(element => {
+                if (element.name && formData[element.name] !== undefined) {
+                    if (element.type === 'checkbox') {
+                        element.checked = formData[element.name];
+                    } else {
+                        element.value = formData[element.name];
+                    }
+                }
+            });
+            sessionStorage.removeItem('formData');
+        }
+    }
+
+    // Find all forms on the page
+    const forms = document.querySelectorAll('form');
+    
+    forms.forEach(form => {
+        // Load saved data when page loads
+        loadFormData(form);
+
+        // Save data when form is submitted
+        form.addEventListener('submit', function() {
+            saveFormData(form);
+        });
+    });
+});
+</script>
+
 </html>
