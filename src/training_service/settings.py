@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "core",
     "users",
+    "custom_auth",
     "rest_framework",
 ]
 
@@ -103,7 +104,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'users.User'
+
+LOGIN_URL = 'auth:login'
+LOGIN_REDIRECT_URL = 'home'  # Redirect to the dashboard after login
+LOGOUT_REDIRECT_URL = 'home'  # Redirect to the login page after logout
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

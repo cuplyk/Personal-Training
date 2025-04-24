@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Personal Training Plan Service | Fitness Coaching Platform{% endblock %}</title>
+    <meta name="description" content="{% block description %}Personal Training Plan Service | Fitness Coaching Platform{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}personal training, fitness coaching, workout plans, nutrition advice{% endblock %}">
+    <meta name="author" content="{% block author %}Your Name{% endblock %}">
+    <meta name="robots" content="index, follow">
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<body>
+    {% block content %}
+    
+    {% endblock %}
+    
+
+
+    <script src="{% static 'js/base.js' %}"></script>
+</body>

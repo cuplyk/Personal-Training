@@ -15,6 +15,22 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     phone_number = models.CharField(max_length=15, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
+
+    # Add related_name to avoid conflicts
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_set',
+        blank=True,
+        help_text=_('The groups this user belongs to.'),
+        verbose_name=_('groups'),
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_set',
+        blank=True,
+        help_text=_('Specific permissions for this user.'),
+        verbose_name=_('user permissions'),
+    )
     
 class CoachProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='coach_profile')

@@ -1,0 +1,514 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<body class="font-sans antialiased text-gray-800">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-dumbbell text-indigo-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-900">Personal Training Plan Service</span>
+                    </div>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="#features" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Features</a>
+                    <a href="#how-it-works" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">How It Works</a>
+                    <a href="#testimonials" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Testimonials</a>
+                    <a href="#pricing" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Pricing</a>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center">
+                    <a href="{% url 'custom_auth:login' %}" class="text-gray-900 hover:text-indigo-600 px-4 py-2 text-sm font-medium">Login</a>
+                    <a href="{% url 'users:register' %}" class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Sign Up
+                    </a>
+                </div>
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-white shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#features" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-indigo-600 hover:bg-gray-50">Features</a>
+                <a href="#how-it-works" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-indigo-600 hover:bg-gray-50">How It Works</a>
+                <a href="#testimonials" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-indigo-600 hover:bg-gray-50">Testimonials</a>
+                <a href="#pricing" class="block px-3 py-2 rounded-md text-base font-medium text-gray-900 hover:text-indigo-600 hover:bg-gray-50">Pricing</a>
+                <div class="pt-4 border-t border-gray-200">
+                    <a href="{% url 'custom_auth:login' %}" class="block w-full px-4 py-2 text-base font-medium text-center text-indigo-600 hover:text-indigo-800">Login</a>
+                    <a href="{% url 'users:register' %}" class="block w-full mt-2 px-4 py-2 text-base font-medium text-center text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+                        Sign Up
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">Your Personal Training Plan Service</h1>
+                    <p class="text-xl md:text-2xl mb-8 opacity-90">Connect with expert coaches or manage your athletes with our comprehensive fitness platform.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="/register?role=athlete" class="px-8 py-3 bg-white text-indigo-600 rounded-lg font-bold text-center hover:bg-gray-100 transition duration-300">
+                            I'm an Athlete
+                        </a>
+                        <a href="/register?role=coach" class="px-8 py-3 bg-indigo-800 text-white rounded-lg font-bold text-center hover:bg-indigo-900 transition duration-300">
+                            I'm a Coach
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Fitness training" 
+                         class="rounded-xl shadow-2xl max-w-full h-auto md:max-w-md">
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center pb-10 scroll-down-arrow">
+            <a href="#features" class="text-white text-4xl animate-bounce">
+                <i class="fas fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Powerful Features for Everyone</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Whether you're a coach or an athlete, our platform provides everything you need for successful training.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-indigo-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Progress Tracking</h3>
+                    <p class="text-gray-600">Athletes can track their progress with detailed analytics and coaches can monitor their clients' improvements.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+                    <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-check text-pink-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Custom Workout Plans</h3>
+                    <p class="text-gray-600">Coaches create personalized workout plans tailored to each athlete's goals and fitness level.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-comments text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Direct Messaging</h3>
+                    <p class="text-gray-600">Secure communication channel between coaches and athletes for questions, feedback, and support.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-video text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Video Demonstrations</h3>
+                    <p class="text-gray-600">Exercise demonstrations with proper form to ensure athletes perform movements correctly.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-utensils text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Nutrition Guidance</h3>
+                    <p class="text-gray-600">Coaches can provide meal plans and nutrition advice to complement workout routines.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card transition duration-300">
+                    <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Mobile Friendly</h3>
+                    <p class="text-gray-600">Access your training plans and track progress from anywhere with our responsive mobile interface.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Simple steps to get started with your personalized fitness journey</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <!-- Steps for Athletes -->
+                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center md:text-left">For Athletes</h3>
+                    <div class="space-y-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 font-bold">
+                                    1
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Sign Up as an Athlete</h4>
+                                <p class="mt-1 text-gray-600">Create your account and complete your fitness profile.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 font-bold">
+                                    2
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Find Your Coach</h4>
+                                <p class="mt-1 text-gray-600">Browse certified coaches and select one that matches your goals.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 font-bold">
+                                    3
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Receive Your Plan</h4>
+                                <p class="mt-1 text-gray-600">Get your personalized training and nutrition plan from your coach.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 font-bold">
+                                    4
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Track & Improve</h4>
+                                <p class="mt-1 text-gray-600">Follow your plan, log workouts, and see your progress over time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Steps for Coaches -->
+                <div class="md:w-1/2 md:pl-10">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center md:text-left">For Coaches</h3>
+                    <div class="space-y-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 text-purple-600 font-bold">
+                                    1
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Sign Up as a Coach</h4>
+                                <p class="mt-1 text-gray-600">Create your professional profile and verify your credentials.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 text-purple-600 font-bold">
+                                    2
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Build Your Client Base</h4>
+                                <p class="mt-1 text-gray-600">Athletes can discover and connect with you through our platform.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 text-purple-600 font-bold">
+                                    3
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Create Custom Plans</h4>
+                                <p class="mt-1 text-gray-600">Use our tools to design personalized programs for each athlete.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-purple-100 text-purple-600 font-bold">
+                                    4
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-900">Monitor Progress</h4>
+                                <p class="mt-1 text-gray-600">Track your athletes' performance and adjust plans as needed.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Success Stories</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Hear from athletes and coaches who transformed their fitness journey</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-md testimonial-card">
+                    <div class="flex items-center mb-6">
+                        <img class="w-12 h-12 rounded-full" src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah J.">
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Sarah J.</h4>
+                            <p class="text-indigo-600">Athlete</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"My coach created a plan that perfectly matched my busy schedule. I've lost 15 pounds in 3 months and feel stronger than ever!"</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-md testimonial-card">
+                    <div class="flex items-center mb-6">
+                        <img class="w-12 h-12 rounded-full" src="https://randomuser.me/api/portraits/men/54.jpg" alt="Mike T.">
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Mike T.</h4>
+                            <p class="text-purple-600">Coach</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"This platform has helped me grow my client base by 200% in just 6 months. The tools make it easy to create and manage training plans."</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-md testimonial-card">
+                    <div class="flex items-center mb-6">
+                        <img class="w-12 h-12 rounded-full" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Lisa M.">
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Lisa M.</h4>
+                            <p class="text-indigo-600">Athlete</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"After struggling with home workouts, my coach's personalized plan helped me gain muscle and confidence. The video demonstrations are incredibly helpful!"</p>
+                    <div class="mt-4 text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Choose the plan that works for you. No hidden fees, cancel anytime.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Athlete Plan -->
+                <div class="bg-gray-50 p-8 rounded-xl border-2 border-indigo-100">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-indigo-600 mb-2">For Athletes</h3>
+                        <p class="text-gray-600">Access to all coaching features</p>
+                    </div>
+                    <div class="text-center mb-8">
+                        <span class="text-5xl font-bold text-gray-900">$29</span>
+                        <span class="text-gray-600">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Unlimited coach messaging</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Personalized workout plans</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Nutrition guidance</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Progress tracking & analytics</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Exercise video library</span>
+                        </li>
+                    </ul>
+                    <a href="/register?role=athlete" class="block w-full px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg text-center hover:bg-indigo-700 transition duration-300">
+                        Get Started
+                    </a>
+                </div>
+                
+                <!-- Coach Plan -->
+                <div class="bg-gray-50 p-8 rounded-xl border-2 border-purple-100 relative">
+                    <div class="absolute top-0 right-0 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
+                        MOST POPULAR
+                    </div>
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-purple-600 mb-2">For Coaches</h3>
+                        <p class="text-gray-600">Grow your coaching business</p>
+                    </div>
+                    <div class="text-center mb-8">
+                        <span class="text-5xl font-bold text-gray-900">$99</span>
+                        <span class="text-gray-600">/month</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Unlimited athlete management</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Custom plan creation tools</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Progress monitoring dashboard</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Client communication portal</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            <span class="text-gray-700">Business analytics & reporting</span>
+                        </li>
+                    </ul>
+                    <a href="/register?role=coach" class="block w-full px-6 py-3 bg-purple-600 text-white font-medium rounded-lg text-center hover:bg-purple-700 transition duration-300">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <p class="text-gray-600">Have questions about pricing? <a href="#" class="text-indigo-600 hover:text-indigo-800 font-medium">Contact our team</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-indigo-700 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Transform Your Fitness Journey?</h2>
+            <p class="text-xl mb-8 max-w-3xl mx-auto">Join thousands of athletes and coaches who are achieving their fitness goals with our platform.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="/register?role=athlete" class="px-8 py-3 bg-white text-indigo-700 rounded-lg font-bold text-center hover:bg-gray-100 transition duration-300">
+                    Sign Up as Athlete
+                </a>
+                <a href="/register?role=coach" class="px-8 py-3 bg-indigo-800 text-white rounded-lg font-bold text-center hover:bg-indigo-900 transition duration-300">
+                    Sign Up as Coach
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-1">
+                    <div class="flex items-center">
+                        <i class="fas fa-dumbbell text-indigo-500 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold">Personal Training Plan Service</span>
+                    </div>
+                    <p class="mt-4 text-gray-400">The complete platform for fitness coaching and athlete management.</p>
+                    <div class="mt-6 flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">For Athletes</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Find a Coach</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Success Stories</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">For Coaches</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Coach Dashboard</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Resources</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Coach Certification</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Company</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2023 Personal Training Plan Service. All rights reserved.</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="/login" class="text-gray-400 hover:text-white text-sm mr-4">Login</a>
+                    <a href="/register" class="text-gray-400 hover:text-white text-sm">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock %}
