@@ -42,6 +42,14 @@ INSTALLED_APPS = [
     "users",
     "custom_auth",
     "rest_framework",
+    'django.contrib.sites',
+
+    # Allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.account.middleware.AccountMiddleware',
+
 ]
 
 MIDDLEWARE = [
@@ -86,6 +94,33 @@ DATABASES = {
 }
 
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of allauth
+    'django.contrib.auth.backends.ModelBackend',
+
+    # allauth specific authentication methods
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
+# settings.py
+ACCOUNT_FORMS = {
+    'signup': 'auth.forms.CustomSignupForm',
+}
+# Allauth settings
+SITE_ID = 1  # Required for allauth
+
+# Authentication settings
+LOGIN_REDIRECT_URL = 'dashboard'  # After successful login
+ACCOUNT_LOGOUT_REDIRECT_URL = 'home'  # After logout
+ACCOUNT_SESSION_REMEMBER = True  # "Remember me" functionality
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Verify email addresses
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -104,7 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+ACCOUNT_ADAPTER = 'auth.adapter.RoleAccountAdapter'
 LOGIN_URL = 'auth:login'
 LOGIN_REDIRECT_URL = 'home'  # Redirect to the dashboard after login
 LOGOUT_REDIRECT_URL = 'home'  # Redirect to the login page after logout

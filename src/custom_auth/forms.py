@@ -28,3 +28,5 @@ class CustomSetPasswordForm(SetPasswordForm):
         label="New password confirmation",
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password'}),
     )
+
+    
